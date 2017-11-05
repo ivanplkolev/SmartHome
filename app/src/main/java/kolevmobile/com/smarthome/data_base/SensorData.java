@@ -7,7 +7,6 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
 
-import static kolevmobile.com.smarthome.DetailsActivity.simpleDateFormat;
 
 /**
  * Created by x on 22.10.2017 г..
@@ -74,9 +73,9 @@ public class SensorData {
         this.date = date;
     }
 
-    public String getDateString() {
-        return simpleDateFormat.format(getDate());
-    }
+//    public String getDateString() {
+//        return simpleDateFormat.format(getDate());
+//    }
 
     public int getUid() {
         return uid;

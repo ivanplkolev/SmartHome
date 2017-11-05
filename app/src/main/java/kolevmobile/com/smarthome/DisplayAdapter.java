@@ -18,9 +18,9 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.List;
 
-import kolevmobile.com.smarthome.data_base.Device;
+import kolevmobile.com.smarthome.model.Device;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
+public class DisplayAdapter extends RecyclerView.Adapter<DisplayAdapter.MyViewHolder> {
 
     private List<Device> devices;
 
@@ -73,11 +73,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             card_base_layout.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View var1, MotionEvent var2) {
-                    if (!devices.get(getPosition()).isRefreshing()) {
+//                    if (!devices.get(getPosition()).isRefreshing()) {
                         boolean vissible = setts_layout.getVisibility() == View.VISIBLE;
                         setts_layout.setVisibility(vissible ? View.INVISIBLE : View.VISIBLE);
                         setts_layout.startAnimation(vissible ? animSlideDisappear : animSlideAppear);
-                    }
+//                    }
                     return false;
                 }
             });
@@ -120,7 +120,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         }
     }
 
-    public CustomAdapter(List<Device> devices, Context context) {
+    public DisplayAdapter(List<Device> devices, Context context) {
         this.devices = devices;
         this.context = context;
     }
@@ -138,11 +138,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
 
-        if (devices.get(listPosition).isRefreshing()) {
-            holder.startAnim();
-        } else {
-            holder.stopAnim();
-        }
+//        if (devices.get(listPosition).isRefreshing()) {
+//            holder.startAnim();
+//        } else {
+//            holder.stopAnim();
+//        }
 
         TextView deviceNameTextView = holder.deviceNameTextView;
         TextView tempTextView = holder.tempTextView;
@@ -150,13 +150,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         TextView lastRefreshTextView = holder.lastRefreshTextView;
         TextView errorMessageTextView = holder.errorMessageTextView;
 
-        deviceNameTextView.setText(devices.get(listPosition).getName());
-        if (devices.get(listPosition).getActualSensorDataUid() != null) {
-            tempTextView.setText(devices.get(listPosition).getActualSensorData().getTemperatureString());
-            humidTextView.setText(devices.get(listPosition).getActualSensorData().getHumidityString());
-            lastRefreshTextView.setText(devices.get(listPosition).getActualSensorData().getDateString());
-        }
-        errorMessageTextView.setText(devices.get(listPosition).getErrorMessage());
+//        deviceNameTextView.setText(devices.get(listPosition).getName());
+//        if (devices.get(listPosition).getActualSensorDataUid() != null) {
+//            tempTextView.setText(devices.get(listPosition).getActualSensorData().getTemperatureString());
+//            humidTextView.setText(devices.get(listPosition).getActualSensorData().getHumidityString());
+//            lastRefreshTextView.setText(devices.get(listPosition).getActualSensorData().getDateString());
+//        }
+//        errorMessageTextView.setText(devices.get(listPosition).getErrorMessage());
     }
 
 

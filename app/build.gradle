@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "kolevmobile.com.smarthome"
         minSdkVersion 21
@@ -25,9 +26,34 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+//    sourceSets {
+//        main {
+//            java.srcDirs = ['src/main/java','src-gem']
+//        }
+//    }
+
+    sourceSets {
+        main {
+//            java.srcDirs = ['src/main/java', 'build/generated/source/greendao']
+            java.srcDirs = ['src/main/java', 'build/generated/source/greendao']
+
+        }
+    }
+}
+
+sourceSets {
+    main {
+//            java.srcDirs = ['src/main/java', 'build/generated/source/greendao']
+        java.srcDirs = ['src/main/java', 'build/generated/source/greendao']
+
+    }
 }
 
 
+greendao {
+    schemaVersion 1000
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -44,6 +70,9 @@ dependencies {
 
     compile 'android.arch.persistence.room:runtime:1.0.0-rc1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-rc1'
+
+    compile 'org.greenrobot:greendao:3.2.2' // add library
+    compile 'org.greenrobot:eventbus:3.0.0'
 
     testCompile 'junit:junit:4.12'
 }

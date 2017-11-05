@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SmartHome</string>
+
+    <string-array name="device_type_array">
+        <item>DHT Sensor Device</item>
+        <item>Custom Sensors Device</item>
+        <item>Relay Device</item>
+    </string-array>
 </resources>
