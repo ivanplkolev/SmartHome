@@ -74,5 +74,8 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.2' // add library
     compile 'org.greenrobot:eventbus:3.0.0'
 
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+
     testCompile 'junit:junit:4.12'
 }

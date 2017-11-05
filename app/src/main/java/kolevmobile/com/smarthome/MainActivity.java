@@ -1,30 +1,29 @@
 package kolevmobile.com.smarthome;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//import kolevmobile.com.smarthome.green_dao.entities.DHTDevice;
-
 import kolevmobile.com.smarthome.model.DaoSession;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.DeviceDao;
+
+//import kolevmobile.com.smarthome.green_dao.entities.DHTDevice;
 //import kolevmobile.com.smarthome.old_new_connector.Looper;
 
 
@@ -35,9 +34,12 @@ public class MainActivity extends AppCompatActivity {
     private static RecyclerView recyclerView;
     private static List<Device> devices = new ArrayList<>();
 
-    private FloatingActionButton addNewDeviceButton;
-
     DeviceDao deviceDao;
+
+    private NavigationView navigationView;
+    private DrawerLayout drawer;
+    private Toolbar toolbar;
+
     //    DHTSensorDataDao dhtSensorDataDao;
 
 //    private Looper looper;
@@ -47,7 +49,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        addNewDeviceButton = findViewById(R.id.addNewDeviceButton);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Main activity");
+//        setSupportActionBar(toolbar_layout);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        navHeader = navigationView.getHeaderView(0);
 
         recyclerView = findViewById(R.id.card_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -87,9 +96,58 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 //        looper = new Looper();
 //        looper.start();
-
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.password_toggle_content_description, R.string.abc_action_bar_home_description);
+        setUpNavigationView();
 
     }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+
+
+    private void setUpNavigationView() {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+//                    case R.id.nav_home:
+//                        break;
+                    case R.id.nav_fonts:
+                        startActivity(new Intent(MainActivity.this, AddEditDeviceActivity.class));
+                        drawer.closeDrawers();
+                        break;
+                    case R.id.nav_backgrounds:
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        drawer.closeDrawers();
+                        break;
+                    case R.id.nav_settings:
+//                        startActivity(new Intent(MainActivity.this, ImePreferences.class));
+                        drawer.closeDrawers();
+                        break;
+                    case R.id.nav_about_us:
+//                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        drawer.closeDrawers();
+                        break;
+                    case R.id.nav_feedback:
+//                        startActivity(new Intent(MainActivity.this, FeedbackActivity.class));
+                        drawer.closeDrawers();
+                        break;
+                }
+                return true;
+            }
+        });
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.app_name, R.string.app_name);
+        drawer.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+    }
+
 
     @Override
     public void onResume() {
@@ -153,21 +211,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        super.onCreateOptionsMenu(menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.add_item) {
-//            addDevice();
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        super.onOptionsItemSelected(item);
+//        if (item.getItemId() == R.id.add_item) {
+////            addDevice();
+//        }
+//        return true;
+//    }
 
     public void editDevice(final int position) {
 

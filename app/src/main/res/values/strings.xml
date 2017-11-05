@@ -6,4 +6,13 @@
         <item>Custom Sensors Device</item>
         <item>Relay Device</item>
     </string-array>
+
+
+    <string name="string_about_activity">About</string>
+    <string name="string_about_title">By Ivan Kolev</string>
+    <string name="string_about_content">This app is part of my portfolio. \n Contact me if you are interested in my work.</string>
+    <string name="string_about_contacts">Contacts:</string>
+    <string name="string_about_linkedin">https://www.linkedin.com/in/ivan-kolev-a669a626</string>
+    <string name="string_about_email">ivan.pl.kolev@gmail.com</string>
+    <string name="string_about_bottom_logo">Copyright \u00A9 2017 Toolbox</string>
 </resources>

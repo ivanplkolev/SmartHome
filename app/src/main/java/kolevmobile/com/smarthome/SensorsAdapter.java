@@ -28,7 +28,6 @@ public class SensorsAdapter extends RecyclerView.Adapter<SensorsAdapter.MyViewHo
         private TextView unitsTextField;
         View editButton;
         View deleteButton;
-        View animationLayout;
         View buttonsLayout;
 
         public MyViewHolder(View view) {

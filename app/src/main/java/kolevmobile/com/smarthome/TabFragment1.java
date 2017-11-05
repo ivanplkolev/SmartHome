@@ -1,9 +1,8 @@
 package kolevmobile.com.smarthome;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,12 @@ public class TabFragment1 extends Fragment {
     EditText deviceUrl;
     EditText devicePort;
 
+    public TabFragment1(){
+        super();
+        Log.d("IVAN !!!!!!!!!","New Fragment 1 is created now "+hashCode());
+    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,7 +38,7 @@ public class TabFragment1 extends Fragment {
         if (getDevice() != null) {
             copyToFields();
         }
-        return inflater.inflate(R.layout.device_general_layout, container, false);
+        return view;
     }
 
     private void initializeFields(View view) {
