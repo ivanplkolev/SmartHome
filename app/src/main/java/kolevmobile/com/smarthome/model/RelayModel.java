@@ -8,6 +8,7 @@ import org.greenrobot.greendao.annotation.ToMany;
 import java.util.List;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.ToOne;
 
 /**
  * Created by me on 02/11/2017.
@@ -30,6 +31,11 @@ public class RelayModel {
     @ToMany(referencedJoinProperty = "relayModelId")
     private List<RelayStatus> relayStatusListlList;
 
+    private Long actualStatusId;
+
+    @ToOne(joinProperty = "actualStatusId")
+    private RelayStatus actualStatus;
+
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -38,15 +44,19 @@ public class RelayModel {
     @Generated(hash = 1231157592)
     private transient RelayModelDao myDao;
 
-    @Generated(hash = 62482143)
-    public RelayModel(Long id, Long deviceId, Integer position, String name,
-            String description, String key) {
+    @Generated(hash = 1876098250)
+    private transient Long actualStatus__resolvedKey;
+
+    @Generated(hash = 987338136)
+    public RelayModel(Long id, Long deviceId, Integer position, String name, String description,
+            String key, Long actualStatusId) {
         this.id = id;
         this.deviceId = deviceId;
         this.position = position;
         this.name = name;
         this.description = description;
         this.key = key;
+        this.actualStatusId = actualStatusId;
     }
 
     @Generated(hash = 161011584)
@@ -164,6 +174,43 @@ public class RelayModel {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public Long getActualStatusId() {
+        return this.actualStatusId;
+    }
+
+    public void setActualStatusId(Long actualStatusId) {
+        this.actualStatusId = actualStatusId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 401773974)
+    public RelayStatus getActualStatus() {
+        Long __key = this.actualStatusId;
+        if (actualStatus__resolvedKey == null || !actualStatus__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            RelayStatusDao targetDao = daoSession.getRelayStatusDao();
+            RelayStatus actualStatusNew = targetDao.load(__key);
+            synchronized (this) {
+                actualStatus = actualStatusNew;
+                actualStatus__resolvedKey = __key;
+            }
+        }
+        return actualStatus;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 558723468)
+    public void setActualStatus(RelayStatus actualStatus) {
+        synchronized (this) {
+            this.actualStatus = actualStatus;
+            actualStatusId = actualStatus == null ? null : actualStatus.getId();
+            actualStatus__resolvedKey = actualStatusId;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */

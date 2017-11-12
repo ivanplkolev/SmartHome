@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".App">
-        <activity android:name=".MainActivity">
+        <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,10 +20,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AddEditDeviceActivity">
+        <activity android:name=".add_edit_device.AddEditDeviceActivity">
         </activity>
 
-        <activity android:name=".AboutActivity">
+        <activity android:name=".about.AboutActivity">
         </activity>
 
 

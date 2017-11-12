@@ -5,9 +5,11 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.ToMany;
 
+import java.util.Date;
 import java.util.List;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.Transient;
 
 /**
  * Created by me on 02/11/2017.
@@ -28,11 +30,16 @@ public class Device {
 
     private Integer port;
 
+    private Date actualizationDate;
+
     @ToMany(referencedJoinProperty = "deviceId")
     private List<SensorModel> sensorModelList;
 
     @ToMany(referencedJoinProperty = "deviceId")
     private List<RelayModel> relayModelList;
+
+    @Transient
+    private Error error;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -42,15 +49,16 @@ public class Device {
     @Generated(hash = 371273952)
     private transient DeviceDao myDao;
 
-    @Generated(hash = 854310459)
-    public Device(Long id, Integer position, String name, String description,
-            String urlAddress, Integer port) {
+    @Generated(hash = 1761097086)
+    public Device(Long id, Integer position, String name, String description, String urlAddress,
+            Integer port, Date actualizationDate) {
         this.id = id;
         this.position = position;
         this.name = name;
         this.description = description;
         this.urlAddress = urlAddress;
         this.port = port;
+        this.actualizationDate = actualizationDate;
     }
 
     @Keep
@@ -204,13 +212,28 @@ public class Device {
         myDao.update(this);
     }
 
+    public Date getActualizationDate() {
+        return this.actualizationDate;
+    }
+
+    public void setActualizationDate(Date actualizationDate) {
+        this.actualizationDate = actualizationDate;
+    }
+
+    public Error getError() {
+        return error;
+    }
+
+    public void setError(Error error) {
+        this.error = error;
+    }
+
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1755220927)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getDeviceDao() : null;
     }
-
 
 
 //    private List<SensorData> sensorDataList;

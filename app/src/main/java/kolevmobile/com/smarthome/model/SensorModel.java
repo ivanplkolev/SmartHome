@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.ToMany;
 import java.util.List;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.ToOne;
 
 /**
  * Created by me on 02/11/2017.
@@ -33,7 +34,12 @@ public class SensorModel {
     private Integer precision;
 
     @ToMany(referencedJoinProperty = "sensorModelId")
-    private List<SensorValue> relayStatusListlList;
+    private List<SensorValue> sensroValueList;
+
+    private Long actualValueId;
+
+    @ToOne(joinProperty = "actualValueId")
+    private SensorValue actualValue;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -43,10 +49,12 @@ public class SensorModel {
     @Generated(hash = 1191326351)
     private transient SensorModelDao myDao;
 
-    @Generated(hash = 60906146)
-    public SensorModel(Long id, Long deviceId, Integer position, String name,
-            String description, String key, String units, Float scaleFactor,
-            Integer precision) {
+    @Generated(hash = 955858925)
+    private transient Long actualValue__resolvedKey;
+
+    @Generated(hash = 1472445992)
+    public SensorModel(Long id, Long deviceId, Integer position, String name, String description,
+            String key, String units, Float scaleFactor, Integer precision, Long actualValueId) {
         this.id = id;
         this.deviceId = deviceId;
         this.position = position;
@@ -56,6 +64,7 @@ public class SensorModel {
         this.units = units;
         this.scaleFactor = scaleFactor;
         this.precision = precision;
+        this.actualValueId = actualValueId;
     }
 
     @Generated(hash = 1303457506)
@@ -135,35 +144,6 @@ public class SensorModel {
     }
 
     /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 1115049484)
-    public List<SensorValue> getRelayStatusListlList() {
-        if (relayStatusListlList == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            SensorValueDao targetDao = daoSession.getSensorValueDao();
-            List<SensorValue> relayStatusListlListNew = targetDao
-                    ._querySensorModel_RelayStatusListlList(id);
-            synchronized (this) {
-                if (relayStatusListlList == null) {
-                    relayStatusListlList = relayStatusListlListNew;
-                }
-            }
-        }
-        return relayStatusListlList;
-    }
-
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 448484918)
-    public synchronized void resetRelayStatusListlList() {
-        relayStatusListlList = null;
-    }
-
-    /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
      */
@@ -197,6 +177,71 @@ public class SensorModel {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 795844918)
+    public List<SensorValue> getSensroValueList() {
+        if (sensroValueList == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            SensorValueDao targetDao = daoSession.getSensorValueDao();
+            List<SensorValue> sensroValueListNew = targetDao._querySensorModel_SensroValueList(id);
+            synchronized (this) {
+                if (sensroValueList == null) {
+                    sensroValueList = sensroValueListNew;
+                }
+            }
+        }
+        return sensroValueList;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 522075861)
+    public synchronized void resetSensroValueList() {
+        sensroValueList = null;
+    }
+
+    public Long getActualValueId() {
+        return this.actualValueId;
+    }
+
+    public void setActualValueId(Long actualValueId) {
+        this.actualValueId = actualValueId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 746159924)
+    public SensorValue getActualValue() {
+        Long __key = this.actualValueId;
+        if (actualValue__resolvedKey == null || !actualValue__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            SensorValueDao targetDao = daoSession.getSensorValueDao();
+            SensorValue actualValueNew = targetDao.load(__key);
+            synchronized (this) {
+                actualValue = actualValueNew;
+                actualValue__resolvedKey = __key;
+            }
+        }
+        return actualValue;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 66886588)
+    public void setActualValue(SensorValue actualValue) {
+        synchronized (this) {
+            this.actualValue = actualValue;
+            actualValueId = actualValue == null ? null : actualValue.getId();
+            actualValue__resolvedKey = actualValueId;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */

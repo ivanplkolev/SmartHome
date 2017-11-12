@@ -1,0 +1,56 @@
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    card_view:contentPadding="7dp"
+    card_view:cardCornerRadius="7dp"
+    card_view:cardElevation="7dp"
+    card_view:cardBackgroundColor="#FF9800"
+    android:layout_margin="1dp"
+    >
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/sensor_name"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:text="Name"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="#fff"/>
+
+    <TextView
+        android:id="@+id/sensor_value"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:text="Value"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="#fff"/>
+
+
+    <TextView
+        android:id="@+id/sensor_units"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:text="Units"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="#fff"/>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

@@ -8,7 +8,7 @@
             <!--android:title="@string/nav_home" />-->
         <item
             android:id="@+id/nav_fonts"
-            android:icon="@drawable/ic_edit_black_24dp"
+            android:icon="@drawable/ic_add_black_24dp"
             android:title="Add new Device" />
         <item
             android:id="@+id/nav_backgrounds"
