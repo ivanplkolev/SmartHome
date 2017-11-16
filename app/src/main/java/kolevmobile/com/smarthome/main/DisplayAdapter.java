@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -268,5 +266,10 @@ public class DisplayAdapter extends RecyclerView.Adapter<DisplayAdapter.DeviceVi
     public int getItemCount() {
         return devices.size();
     }
+
+    public void notifyItemChanged(Object device){
+        notifyItemChanged(devices.indexOf(device));
+    }
+
 
 }

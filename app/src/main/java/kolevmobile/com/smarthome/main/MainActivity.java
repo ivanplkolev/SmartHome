@@ -16,9 +16,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,6 @@ import kolevmobile.com.smarthome.model.DaoSession;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.DeviceDao;
 import kolevmobile.com.smarthome.model.RelayModel;
-import kolevmobile.com.smarthome.model.SensorModel;
 
 //import kolevmobile.com.smarthome.green_dao.entities.DHTDevice;
 //import kolevmobile.com.smarthome.old_new_connector.Looper;
@@ -41,7 +38,7 @@ import kolevmobile.com.smarthome.model.SensorModel;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static RecyclerView.Adapter adapter;
+    private static DisplayAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
     private static List<Device> devices = new ArrayList<>();
@@ -85,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (view.getId()) {
                     case R.id.refreshButton:
                         refreshDevice(position);
-                        Communicator.getDeviceStatus(devices.get(position), MainActivity.this, position);
+                        Communicator.getDeviceStatus(devices.get(position), MainActivity.this);
                         break;
                     case R.id.detailsButton:
 //                        Intent intent = new Intent(getBaseContext(), DetailsActivity.class);
@@ -105,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
                         int newStatus = ((SwitchCompat) view).isChecked() ? 1 : 0;
                         // connect the device
-                        Communicator.switchRelay(devices.get(position), MainActivity.this, position, updatingRelay);
+//                        Communicator.switchRelay(devices.get(position), MainActivity.this, updatingRelay);
                         Toast.makeText(MainActivity.this, "Switched " + updatingRelay.getName() + " : " + newStatus, Toast.LENGTH_LONG).show();
                         break;
                 }
@@ -212,20 +209,17 @@ public class MainActivity extends AppCompatActivity {
 //        }).start();
     }
 
-    public final static int DO_UPDATE_VIEW = 0;
-    public final static int DO_UPDATE_LIST = 1;
+    public final static int DO_UPDATE_ALL_VIEWS = 0;
+    public final static int DO_UPDATE_DEVICE_VIEW = 1;
     private final Handler myHandler = new Handler() {
         public void handleMessage(Message msg) {
             final int what = msg.what;
             switch (what) {
-                case DO_UPDATE_VIEW:
-//                    refreshViews();
-                  int pos =  msg.arg1;
-                adapter.notifyItemChanged(pos);
-
+                case DO_UPDATE_ALL_VIEWS:
+                    adapter.notifyDataSetChanged();
                     break;
-                case DO_UPDATE_LIST:
-//                    adapter.notifyDataSetChanged();
+                case DO_UPDATE_DEVICE_VIEW:
+                    adapter.notifyItemChanged(msg.obj);
                     break;
             }
         }
