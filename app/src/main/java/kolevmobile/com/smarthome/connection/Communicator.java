@@ -16,7 +16,9 @@ import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.DeviceDao;
 import kolevmobile.com.smarthome.model.Error;
 import kolevmobile.com.smarthome.model.RelayModel;
+import kolevmobile.com.smarthome.model.RelayModelDao;
 import kolevmobile.com.smarthome.model.RelayStatus;
+import kolevmobile.com.smarthome.model.RelayStatusDao;
 import kolevmobile.com.smarthome.model.SensorModel;
 import kolevmobile.com.smarthome.model.SensorModelDao;
 import kolevmobile.com.smarthome.model.SensorValue;
@@ -39,6 +41,8 @@ public class Communicator {
     private static DeviceDao deviceDao;
     private static SensorModelDao sensorModelDao;
     private static SensorValueDao sensorValueDao;
+    private static RelayModelDao relayModelDao;
+    private static RelayStatusDao relayStatusDao;
 
 
     public static void getDeviceStatus(Device device, MainActivity activity) {
@@ -47,6 +51,8 @@ public class Communicator {
             deviceDao = daoSession.getDeviceDao();
             sensorModelDao = daoSession.getSensorModelDao();
             sensorValueDao = daoSession.getSensorValueDao();
+            relayModelDao = daoSession.getRelayModelDao();
+            relayStatusDao = daoSession.getRelayStatusDao();
         }
 
         HttpUrl url = new HttpUrl.Builder()
@@ -79,7 +85,14 @@ public class Communicator {
 
 
     public static void switchRelay(Device device, MainActivity activity, RelayModel relayModel) {
-
+        if (deviceDao == null) {
+            DaoSession daoSession = ((App) activity.getApplication()).getDaoSession();
+            deviceDao = daoSession.getDeviceDao();
+            sensorModelDao = daoSession.getSensorModelDao();
+            sensorValueDao = daoSession.getSensorValueDao();
+            relayModelDao = daoSession.getRelayModelDao();
+            relayStatusDao = daoSession.getRelayStatusDao();
+        }
 
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
@@ -163,11 +176,16 @@ public class Communicator {
 //                    RelayModel relayModel = device.getRelayModelList().get(i);
                     int result = jobject.get(relayModel.getKey()).getAsInt();
                     RelayStatus relayStatus = new RelayStatus();
+                    relayStatus.setRelayModelId(relayModel.getId());
                     relayStatus.setValue(result);
                     relayStatus.setConfirmed(true);
                     relayStatus.setSentAt(new Date());
+                    relayStatusDao.insert(relayStatus);
+
 
                     relayModel.setActualStatus(relayStatus);
+                    relayModel.setActualStatusId(relayStatus.getId());
+                    relayModelDao.update(relayModel);
                     device.setActualizationDate(new Date());
                 }
             }

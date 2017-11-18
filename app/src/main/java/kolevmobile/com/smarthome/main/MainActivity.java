@@ -16,7 +16,6 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,9 +100,10 @@ public class MainActivity extends AppCompatActivity {
                         Device updatingDevice = devices.get(position);
                         RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
                         int newStatus = ((SwitchCompat) view).isChecked() ? 1 : 0;
+                        updatingRelay.getActualStatus().setValue(newStatus);
                         // connect the device
-//                        Communicator.switchRelay(devices.get(position), MainActivity.this, updatingRelay);
-                        Toast.makeText(MainActivity.this, "Switched " + updatingRelay.getName() + " : " + newStatus, Toast.LENGTH_LONG).show();
+                        Communicator.switchRelay(devices.get(position), MainActivity.this, updatingRelay);
+//                        Toast.makeText(MainActivity.this, "Switched " + updatingRelay.getName() + " : " + newStatus, Toast.LENGTH_LONG).show();
                         break;
                 }
             }
