@@ -102,13 +102,6 @@ public class Communicator {
         .addQueryParameter("status", String.valueOf(relayModel.getActualStatus().getValue()))
                 .build();
 
-
-//        HttpUrl.Builder urlBuilder = HttpUrl.parse(device.getUrlAddress()).newBuilder();
-//        urlBuilder.addQueryParameter("command", "switchrelay");
-//        urlBuilder.addQueryParameter("key", relayModel.getKey());
-//        urlBuilder.addQueryParameter("status", String.valueOf(relayModel.getActualStatus().getValue()));
-//        String url = urlBuilder.build().toString();
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -135,20 +128,12 @@ public class Communicator {
     }
 
     private static void handleDeviceResponce(Response response, Device device, MainActivity activity) throws IOException {
-
         if (!response.isSuccessful()) {
             device.setError(Error.COMUNICATING_ERROR);
-            activity.getMyHandler().sendMessage(new Message());
-//                    throw new IOException("Unexpected code " + response);
         } else {
-            // do something wih the result
-
             String res = response.body().string();
             JsonElement jelement = new JsonParser().parse(res);
             JsonObject jobject = jelement.getAsJsonObject();
-//                    jobject = jobject.getAsJsonObject("data");
-//                    JsonArray jarray = jobject.getAsJsonArray("translations");
-//                    jobject = jarray.get(0).getAsJsonObject();
             String error = jobject.get("Error").getAsString();
             if (false&& error != null && error.length() != 0) {
                 device.setError(Error.SCHEMA_ERROR);
@@ -161,24 +146,20 @@ public class Communicator {
                     sensorValue.setSensorModelId(sensorModel.getId());
                     sensorValueDao.insert(sensorValue);
 
-                    //persisit sensor val
                     device.setActualizationDate(new Date());
                     sensorModel.setActualValue(sensorValue);
                     sensorModel.setActualValueId(sensorValue.getId());
                     sensorModel.getSensroValueList().add(sensorValue);
 
-                    // persisit sensor model
                     sensorModelDao.update(sensorModel);
 
                 }
 
                 for (RelayModel relayModel :  device.getRelayModelList()) {
-//                    RelayModel relayModel = device.getRelayModelList().get(i);
                     int result = jobject.get(relayModel.getKey()).getAsInt();
                     RelayStatus relayStatus = new RelayStatus();
                     relayStatus.setRelayModelId(relayModel.getId());
                     relayStatus.setValue(result);
-                    relayStatus.setConfirmed(true);
                     relayStatus.setSentAt(new Date());
                     relayStatusDao.insert(relayStatus);
 
@@ -189,11 +170,12 @@ public class Communicator {
                     device.setActualizationDate(new Date());
                 }
             }
-            Message message = new Message();
-            message.obj=device;
-            message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
-            activity.getMyHandler().sendMessage(message);
         }
+        device.setRefreshing(false);
+        Message message = new Message();
+        message.obj=device;
+        message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
+        activity.getMyHandler().sendMessage(message);
         deviceDao.update(device);
     }
 

@@ -15,7 +15,7 @@
             android:id="@+id/device_name_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name" />
+            android:hint="@string/device_general_layout_name" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -28,7 +28,7 @@
             android:id="@+id/device_description_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Description" />
+            android:hint="@string/device_general_layout_description" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -47,7 +47,7 @@
                 android:id="@+id/device_url_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="URL Adress" />
+                android:hint="@string/device_general_layout_url_adress" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -60,9 +60,9 @@
                 android:id="@+id/device_port_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Port number"
+                android:hint="@string/device_general_layout_port_number"
                 android:inputType="number"
-                android:text="80"/>
+                android:text="@string/device_general_layout_port_default"/>
 
         </android.support.design.widget.TextInputLayout>
 

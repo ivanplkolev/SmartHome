@@ -36,7 +36,7 @@ public class AddEditDeviceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         toolbar.setTitle("Add edit device");
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
 
@@ -114,13 +114,12 @@ public class AddEditDeviceActivity extends AppCompatActivity {
             tabLayout.addTab(tabLayout.newTab().setText("Realays"));
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-            viewPager = (ViewPager) findViewById(R.id.pager);
+            viewPager = findViewById(R.id.pager);
             adapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
             viewPager.setAdapter(adapter);
         }
 
         viewPager.setCurrentItem(1, true);
-//        onBackPressed();
     }
 
     public void cancelSaving(View v) {

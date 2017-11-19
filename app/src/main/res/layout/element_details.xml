@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/sensor_name_details_element"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textSize="20sp" />
+
+    <kolevmobile.com.smarthome.details.DetailsChartView
+        android:id="@+id/details_chart"
+        android:layout_width="match_parent"
+        android:layout_height="240sp" />
+
+</LinearLayout>

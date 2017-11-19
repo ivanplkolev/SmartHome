@@ -17,7 +17,7 @@
                 android:id="@+id/sensor_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name" />
+                android:hint="@string/add_sensor_dialog_name" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/sensor_description_input_layout"
@@ -28,7 +28,7 @@
                     android:id="@+id/sensor_description_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Description" />
+                    android:hint="@string/add_relay_dialog_description" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -41,7 +41,7 @@
                     android:id="@+id/sensor_key_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Key" />
+                    android:hint="@string/add_sensor_dialog_key" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -54,7 +54,7 @@
                     android:id="@+id/sensor_units_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Units" />
+                    android:hint="@string/add_sensor_dialog_units" />
 
             </android.support.design.widget.TextInputLayout>
 

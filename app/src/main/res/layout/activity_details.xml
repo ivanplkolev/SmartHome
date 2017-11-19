@@ -6,24 +6,20 @@
 
     <TextView
         android:id="@+id/detailsDeviceNameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
-        />
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/detailsDeviceDescTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        />
+        android:textSize="18sp" />
 
-
-    <TextView
-        android:id="@+id/detailsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        />
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/details_chart_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 </LinearLayout>

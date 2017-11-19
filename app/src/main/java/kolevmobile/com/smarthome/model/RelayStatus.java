@@ -1,10 +1,10 @@
 package kolevmobile.com.smarthome.model;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
 import java.util.Date;
-import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by me on 02/11/2017.
@@ -23,19 +23,16 @@ public class RelayStatus {
     private Integer duration;
 
     private Date sentAt;
-
-    private Boolean confirmed;
-
-    @Generated(hash = 691775365)
+    
+    @Generated(hash = 432726482)
     public RelayStatus(Long id, Long relayModelId, Integer value, Integer delay,
-            Integer duration, Date sentAt, Boolean confirmed) {
+            Integer duration, Date sentAt) {
         this.id = id;
         this.relayModelId = relayModelId;
         this.value = value;
         this.delay = delay;
         this.duration = duration;
         this.sentAt = sentAt;
-        this.confirmed = confirmed;
     }
 
     @Generated(hash = 1810610780)
@@ -89,15 +86,6 @@ public class RelayStatus {
     public void setSentAt(Date sentAt) {
         this.sentAt = sentAt;
     }
-
-    public Boolean getConfirmed() {
-        return this.confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
-    }
-
 
 
 

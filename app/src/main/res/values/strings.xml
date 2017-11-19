@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">SmartHome</string>
+    <string name="open_drawer">Open</string>
+    <string name="close_drawer">Close</string>
+    <string name="not_info">Not info yet</string>
 
     <string-array name="device_type_array">
         <item>DHT Sensor Device</item>
@@ -14,5 +17,18 @@
     <string name="string_about_contacts">Contacts:</string>
     <string name="string_about_linkedin">https://www.linkedin.com/in/ivan-kolev-a669a626</string>
     <string name="string_about_email">ivan.pl.kolev@gmail.com</string>
-    <string name="string_about_bottom_logo">Copyright \u00A9 2017 Toolbox</string>
+    <string name="string_about_bottom_logo">Copyright \u00A9 2017 SmartHome</string>
+    <string name="add_relay_dialog_name">Name</string>
+    <string name="add_relay_dialog_desc">Description</string>
+    <string name="add_relay_dialog_key">Key</string>
+    <string name="add_relay_dialog_description">Description</string>
+    <string name="add_sensor_dialog_key">Key</string>
+    <string name="add_sensor_dialog_units">Units</string>
+    <string name="add_sensor_dialog_name">Name</string>
+    <string name="device_general_layout_url_adress">URL Adress</string>
+    <string name="device_general_layout_port_number">Port number</string>
+    <string name="device_general_layout_port_default">80</string>
+    <string name="device_general_layout_description">Description</string>
+    <string name="device_general_layout_name">Name</string>
+
 </resources>

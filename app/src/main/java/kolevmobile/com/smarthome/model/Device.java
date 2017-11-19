@@ -1,15 +1,15 @@
 package kolevmobile.com.smarthome.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.ToMany;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Date;
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.Transient;
 
 /**
  * Created by me on 02/11/2017.
@@ -41,17 +41,24 @@ public class Device {
     @Transient
     private Error error;
 
-    /** Used to resolve relations */
+    @Transient
+    private boolean refreshing;
+
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 371273952)
     private transient DeviceDao myDao;
 
     @Generated(hash = 1761097086)
     public Device(Long id, Integer position, String name, String description, String urlAddress,
-            Integer port, Date actualizationDate) {
+                  Integer port, Date actualizationDate) {
         this.id = id;
         this.position = position;
         this.name = name;
@@ -141,7 +148,9 @@ public class Device {
         return sensorModelList;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 763065939)
     public synchronized void resetSensorModelList() {
         sensorModelList = null;
@@ -170,7 +179,9 @@ public class Device {
         return relayModelList;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 609925632)
     public synchronized void resetRelayModelList() {
         relayModelList = null;
@@ -228,19 +239,19 @@ public class Device {
         this.error = error;
     }
 
+    public boolean isRefreshing() {
+        return refreshing;
+    }
+
+    public void setRefreshing(boolean refreshing) {
+        this.refreshing = refreshing;
+    }
+
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1755220927)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getDeviceDao() : null;
     }
-
-
-//    private List<SensorData> sensorDataList;
-//
-//    private List<SensorDataWithHistory> sensorDataWithHistoryList;
-//
-//    private List<RelayData> relayDataList;
-
 
 }

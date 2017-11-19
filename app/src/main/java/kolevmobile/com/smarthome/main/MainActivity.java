@@ -15,38 +15,36 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kolevmobile.com.smarthome.App;
-import kolevmobile.com.smarthome.ItemButtonObserver;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.about.AboutActivity;
 import kolevmobile.com.smarthome.add_edit_device.AddEditDeviceActivity;
 import kolevmobile.com.smarthome.connection.Communicator;
+import kolevmobile.com.smarthome.details.DetailsActivity;
 import kolevmobile.com.smarthome.model.DaoSession;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.DeviceDao;
 import kolevmobile.com.smarthome.model.RelayModel;
 
-//import kolevmobile.com.smarthome.green_dao.entities.DHTDevice;
-//import kolevmobile.com.smarthome.old_new_connector.Looper;
-
 
 public class MainActivity extends AppCompatActivity {
 
-    private static DisplayAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private static RecyclerView recyclerView;
-    private static List<Device> devices = new ArrayList<>();
+    private MainDisplayAdapter mainDisplayAdapter;
+    private NavigationView mainNavigationView;
+    private DrawerLayout mainDrawer;
+    private Toolbar mainToolbar;
 
-    DeviceDao deviceDao;
+    private static List<Device> activeDevices;
 
-    private NavigationView navigationView;
-    private DrawerLayout drawer;
-    private Toolbar toolbar;
+    private DeviceDao deviceDao;
+
+    public final static int DO_UPDATE_ALL_VIEWS = 0;
+    public final static int DO_UPDATE_DEVICE_VIEW = 1;
+    private Handler mainHandler;
 
 
     @Override
@@ -54,261 +52,147 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mainToolbar = findViewById(R.id.main_toolbar);
+        mainToolbar.setTitle("Main activity");
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Main activity");
-//        setSupportActionBar(toolbar_layout);
+        mainDrawer = findViewById(R.id.main_drawer);
+        mainNavigationView = findViewById(R.id.main_navigation_view);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navHeader = navigationView.getHeaderView(0);
-
-        recyclerView = findViewById(R.id.card_recycler_view);
-        recyclerView.setHasFixedSize(true);
-
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
+        RecyclerView.LayoutManager mainLayoutManager = new LinearLayoutManager(this);
+        mainRecyclerView.setLayoutManager(mainLayoutManager);
+        mainRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         DaoSession daoSession = ((App) getApplication()).getDaoSession();
         deviceDao = daoSession.getDeviceDao();
 
-
-        adapter = new DisplayAdapter(devices, this);
-        ((DisplayAdapter) adapter).setOnItemViewClickListener(new ItemButtonObserver() {
-            @Override
-            public void onClick(View view, int position, int subPosition) {
-                switch (view.getId()) {
-                    case R.id.refreshButton:
-                        refreshDevice(position);
-                        Communicator.getDeviceStatus(devices.get(position), MainActivity.this);
+        activeDevices = new ArrayList<>();
+        mainDisplayAdapter = new MainDisplayAdapter(activeDevices, this);
+        mainDisplayAdapter.setOnItemViewClickListener((view, position, subPosition) -> {
+            switch (view.getId()) {
+                case R.id.refreshButton:
+                    refreshDevice(activeDevices.get(position));
+                    break;
+                case R.id.detailsButton:
+                    showDeviceDetails(position);
+                    break;
+                case R.id.editButton:
+                    editDevice(position);
+                    break;
+                case R.id.deleteButton:
+                    removeDevice(position);
+                    break;
+                case R.id.relay_toggler:
+                    switchDeviceRelay(position, subPosition, ((SwitchCompat) view).isChecked());
+                    break;
+            }
+        });
+        mainHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                final int what = msg.what;
+                switch (what) {
+                    case DO_UPDATE_ALL_VIEWS:
+                        mainDisplayAdapter.notifyDataSetChanged();
                         break;
-                    case R.id.detailsButton:
-//                        Intent intent = new Intent(getBaseContext(), DetailsActivity.class);
-//                        intent.putExtra(DetailsActivity.DEVICE_FOR_DETAILS, devices.get(position).getId());
-//                        startActivity(intent);
-                        break;
-                    case R.id.editButton:
-                        editDevice(position);
-                        break;
-                    case R.id.deleteButton:
-                        Device removedDevice = devices.remove(position);
-                        adapter.notifyItemRemoved(position);
-                        deviceDao.delete(removedDevice);
-                        break;
-                    case R.id.relay_toggler:
-                        Device updatingDevice = devices.get(position);
-                        RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
-                        int newStatus = ((SwitchCompat) view).isChecked() ? 1 : 0;
-                        updatingRelay.getActualStatus().setValue(newStatus);
-                        // connect the device
-                        Communicator.switchRelay(devices.get(position), MainActivity.this, updatingRelay);
-//                        Toast.makeText(MainActivity.this, "Switched " + updatingRelay.getName() + " : " + newStatus, Toast.LENGTH_LONG).show();
+                    case DO_UPDATE_DEVICE_VIEW:
+                        mainDisplayAdapter.notifyItemChanged(msg.obj);
                         break;
                 }
             }
-        });
-        recyclerView.setAdapter(adapter);
-//        looper = new Looper();
-//        looper.start();
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.password_toggle_content_description, R.string.abc_action_bar_home_description);
+        };
+        mainRecyclerView.setAdapter(mainDisplayAdapter);
         setUpNavigationView();
-
     }
+
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawers();
+        if (mainDrawer.isDrawerOpen(GravityCompat.START)) {
+            mainDrawer.closeDrawers();
             return;
         }
         super.onBackPressed();
     }
 
-
     private void setUpNavigationView() {
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mainNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-//                    case R.id.nav_home:
-//                        break;
-                    case R.id.nav_fonts:
-                        startActivity(new Intent(MainActivity.this, AddEditDeviceActivity.class));
-                        drawer.closeDrawers();
+                    case R.id.add_device:
+                        addDevice();
+                        mainDrawer.closeDrawers();
                         break;
-                    case R.id.nav_backgrounds:
+                    case R.id.about_page:
                         startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        drawer.closeDrawers();
-                        break;
-                    case R.id.nav_settings:
-//                        startActivity(new Intent(MainActivity.this, ImePreferences.class));
-                        drawer.closeDrawers();
-                        break;
-                    case R.id.nav_about_us:
-//                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        drawer.closeDrawers();
-                        break;
-                    case R.id.nav_feedback:
-//                        startActivity(new Intent(MainActivity.this, FeedbackActivity.class));
-                        drawer.closeDrawers();
+                        mainDrawer.closeDrawers();
                         break;
                 }
                 return true;
             }
         });
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.app_name, R.string.app_name);
-        drawer.setDrawerListener(actionBarDrawerToggle);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mainDrawer, mainToolbar, R.string.open_drawer, R.string.close_drawer);
+        mainDrawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 
 
     @Override
     public void onResume() {
-        super.onResume();  // Always call the superclass method first
-        devices.clear();
-        devices.addAll(deviceDao.loadAll());
-        adapter.notifyDataSetChanged();
+        super.onResume();
+        refreshDevices();
     }
 
-    void refreshDevice(int pos) {
-//        DHTDevice refreshingDevice = devices.get(pos);
-//        refreshingDevice.setRefreshing(true);
-//        adapter.notifyItemChanged(pos);
-//        looper.addTask(new ReadDHTSensorTask(refreshingDevice, myHandler ));
-//        ArduinoWifiCommunicator communicator = new ArduinoWifiCommunicator();
-//        new Thread(() -> {
-////            Exception exception = null;
-//            try {
-//                SensorData sensorData = communicator.getData(refreshingDevice);
-//                if (sensorData != null) {
-//                    refreshingDevice.setActualSensorData(sensorData);
-//                }
-//                refreshingDevice.setRefreshing(false);
-//                adapter.notifyItemRemoved(pos);
-//
-//                if (sensorData != null) {
-////                    int sensordataUid = (int) DataBaseSisngleton.getDataBase(MainActivity.this).sensorDataDao().insert(sensorData);
-////                    sensorData.setUid(sensordataUid);
-//                    dhtSensorDataDao.insert(sensorData);
-//                    refreshingDevice.setActualSensorDataUid(sensorData.getUid());
-////                    DataBaseSisngleton.editDevice(refreshingDevice, MainActivity.this);
-//                    dhtDeviceDao.update(refreshingDevice);
-//                }
-//            } catch (WrongSensorDataException e) {
-////                exception = e;
-//                refreshingDevice.setErrorMessage("Problem reading sensor data");
-//                refreshingDevice.setRefreshing(false);
-//                adapter.notifyItemChanged(pos);
-//            } catch (NoDeviceException e) {
-////                exception = e;
-//                refreshingDevice.setErrorMessage("Problem connecting with the device");
-//                refreshingDevice.setRefreshing(false);
-//                adapter.notifyItemChanged(pos);
-//            }
-//        }).start();
-    }
-
-    public final static int DO_UPDATE_ALL_VIEWS = 0;
-    public final static int DO_UPDATE_DEVICE_VIEW = 1;
-    private final Handler myHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            final int what = msg.what;
-            switch (what) {
-                case DO_UPDATE_ALL_VIEWS:
-                    adapter.notifyDataSetChanged();
-                    break;
-                case DO_UPDATE_DEVICE_VIEW:
-                    adapter.notifyItemChanged(msg.obj);
-                    break;
+    private void refreshDevices() {
+        new Thread() {
+            public void run() {
+                activeDevices.clear();
+                activeDevices.addAll(deviceDao.loadAll());
+                mainDisplayAdapter.notifyDataSetChanged();
             }
-        }
-    };
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        super.onCreateOptionsMenu(menu);
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        super.onOptionsItemSelected(item);
-//        if (item.getItemId() == R.id.add_item) {
-////            addDevice();
-//        }
-//        return true;
-//    }
-
-    public void editDevice(final int position) {
-
-        Intent intent = new Intent(getBaseContext(), AddEditDeviceActivity.class);
-        intent.putExtra(AddEditDeviceActivity.EDIT_DEVICE_ID_EXTRA, devices.get(position).getId());
-        startActivity(intent);
-
-//        final DHTDevice device = devices.get(position);
-//        LayoutInflater li = LayoutInflater.from(this);
-//        View promptsView = li.inflate(R.layout.activity_add_edit, null);
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-//
-//        // set prompts.xml to alertdialog builder
-//        alertDialogBuilder.setView(promptsView);
-//
-//        final EditText deviceName = promptsView.findViewById(R.id.newDeviceName);
-//        final EditText deviceDescription = promptsView.findViewById(R.id.newDeviceDescriprtion);
-//        final EditText deviceUrl = promptsView.findViewById(R.id.newDeviceUrl);
-//
-//        deviceName.setText(device.getName());
-//        deviceDescription.setText(device.getDescription());
-//        deviceUrl.setText(device.getUrl());
-//
-//        // set dialog message
-//        alertDialogBuilder
-//                .setCancelable(false)
-//                .setPositiveButton("OK",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                device.setName(deviceName.getText().toString());
-//                                device.setDescription(deviceDescription.getText().toString());
-//                                device.setUrl(deviceUrl.getText().toString());
-//
-////                                SensorData sd = new SensorData(33, 33, new Date());
-//
-//                                adapter.notifyItemChanged(position);
-////                                new EditDeviceInDb(device).execute();
-//                                new Thread(new Runnable() {
-//                                    public void run() {
-////                                        DataBaseSisngleton.editDevice(device, MainActivity.this.getApplicationContext());
-//                                        dhtDeviceDao.update(device);
-//                                    }
-//                                }).start();
-//
-//
-//                            }
-//                        })
-//                .setNegativeButton("Cancel",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                dialog.cancel();
-//                            }
-//                        });
-//
-//        // create alert dialog
-//        AlertDialog alertDialog = alertDialogBuilder.create();
-//
-//        // show it
-//        alertDialog.show();
+        }.start();
     }
 
+    private void addDevice() {
+        startActivity(new Intent(MainActivity.this, AddEditDeviceActivity.class));
+    }
 
-    public void addDevice(View v) {
+    private void editDevice(final int position) {
         Intent intent = new Intent(getBaseContext(), AddEditDeviceActivity.class);
+        intent.putExtra(AddEditDeviceActivity.EDIT_DEVICE_ID_EXTRA, activeDevices.get(position).getId());
         startActivity(intent);
     }
 
+    private void removeDevice(int position) {
+        Device removedDevice = activeDevices.remove(position);
+        mainDisplayAdapter.notifyItemRemoved(position);
+        deviceDao.delete(removedDevice);
+    }
+
+    private void refreshDevice(Device device) {
+        device.setRefreshing(true);
+        mainDisplayAdapter.notifyItemChanged(device);
+        Communicator.getDeviceStatus(device, MainActivity.this);
+    }
+
+    private void showDeviceDetails(int position) {
+        Intent intent = new Intent(getBaseContext(), DetailsActivity.class);
+        intent.putExtra(DetailsActivity.DEVICE_FOR_DETAILS, activeDevices.get(position).getId());
+        startActivity(intent);
+    }
+
+
+    private void switchDeviceRelay(int position, int subPosition, boolean isChecked) {
+        Device updatingDevice = activeDevices.get(position);
+        updatingDevice.setRefreshing(true);
+        mainDisplayAdapter.notifyItemChanged(updatingDevice);
+        RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
+        int newStatus = isChecked ? 1 : 0;
+        updatingRelay.getActualStatus().setValue(newStatus);
+        Communicator.switchRelay(activeDevices.get(position), this, updatingRelay);
+    }
 
     public Handler getMyHandler() {
-        return myHandler;
+        return mainHandler;
     }
 }
