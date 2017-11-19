@@ -24,6 +24,7 @@ import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.about.AboutActivity;
 import kolevmobile.com.smarthome.add_edit_device.AddEditDeviceActivity;
 import kolevmobile.com.smarthome.connection.Communicator;
+import kolevmobile.com.smarthome.connection.CommunicatorImpl;
 import kolevmobile.com.smarthome.details.DetailsActivity;
 import kolevmobile.com.smarthome.model.DaoSession;
 import kolevmobile.com.smarthome.model.Device;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     public final static int DO_UPDATE_DEVICE_VIEW = 1;
     private Handler mainHandler;
 
+    Communicator communicator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         DaoSession daoSession = ((App) getApplication()).getDaoSession();
         deviceDao = daoSession.getDeviceDao();
+
+        communicator = new CommunicatorImpl();
 
         activeDevices = new ArrayList<>();
         mainDisplayAdapter = new MainDisplayAdapter(activeDevices, this);
@@ -172,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     private void refreshDevice(Device device) {
         device.setRefreshing(true);
         mainDisplayAdapter.notifyItemChanged(device);
-        Communicator.getDeviceStatus(device, MainActivity.this);
+        communicator.getDeviceStatus(device, MainActivity.this);
     }
 
     private void showDeviceDetails(int position) {
@@ -189,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
         int newStatus = isChecked ? 1 : 0;
         updatingRelay.getActualStatus().setValue(newStatus);
-        Communicator.switchRelay(activeDevices.get(position), this, updatingRelay);
+        communicator.switchRelay(activeDevices.get(position), this, updatingRelay);
     }
 
     public Handler getMyHandler() {
