@@ -1,2 +1,3 @@
 # SmartHome
-Anddroid Application and Arduino code, that uses sensors to display data on the Aandroid device
+Anddroid Application athat uses Arduino REST Web Service to control it and reads sensor data from it.
+In another my repo is the Arduino Web Service, here is the Android client.
