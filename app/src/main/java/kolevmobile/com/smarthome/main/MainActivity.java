@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.about.AboutActivity;
@@ -32,66 +34,61 @@ import kolevmobile.com.smarthome.model.DeviceDao;
 import kolevmobile.com.smarthome.model.RelayModel;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainView {
+
+    private MainPresenter presenter;
 
     private MainDisplayAdapter mainDisplayAdapter;
-    private NavigationView mainNavigationView;
-    private DrawerLayout mainDrawer;
-    private Toolbar mainToolbar;
-
-    private static List<Device> activeDevices;
-
-    private DeviceDao deviceDao;
+    private Handler mainHandler;
 
     public final static int DO_UPDATE_ALL_VIEWS = 0;
     public final static int DO_UPDATE_DEVICE_VIEW = 1;
-    private Handler mainHandler;
+    public final static int DO_REMOVE_DEVICE_VIEW = 2;
+    public final static int DO_INIT_DEVICES = 3;
 
-    Communicator communicator;
-
+    @BindView(R.id.main_navigation_view)
+    private NavigationView mainNavigationView;
+    @BindView(R.id.main_drawer)
+    private DrawerLayout mainDrawer;
+    @BindView(R.id.main_toolbar)
+    private Toolbar mainToolbar;
+    @BindView(R.id.main_recycler_view)
+    private RecyclerView mainRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mainToolbar = findViewById(R.id.main_toolbar);
         mainToolbar.setTitle("Main activity");
 
-        mainDrawer = findViewById(R.id.main_drawer);
-        mainNavigationView = findViewById(R.id.main_navigation_view);
 
-        RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
         RecyclerView.LayoutManager mainLayoutManager = new LinearLayoutManager(this);
         mainRecyclerView.setLayoutManager(mainLayoutManager);
         mainRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        DaoSession daoSession = ((App) getApplication()).getDaoSession();
-        deviceDao = daoSession.getDeviceDao();
-
-        communicator = new CommunicatorImpl();
-
-        activeDevices = new ArrayList<>();
-        mainDisplayAdapter = new MainDisplayAdapter(activeDevices, this);
+        mainDisplayAdapter = new MainDisplayAdapter(this);
         mainDisplayAdapter.setOnItemViewClickListener((view, position, subPosition) -> {
             switch (view.getId()) {
                 case R.id.refreshButton:
-                    refreshDevice(activeDevices.get(position));
+                    presenter.refreshDevice(position);
                     break;
                 case R.id.detailsButton:
-                    showDeviceDetails(position);
+                    presenter.showDeviceDetails(position);
                     break;
                 case R.id.editButton:
-                    editDevice(position);
+                    presenter.editDevice(position);
                     break;
                 case R.id.deleteButton:
-                    removeDevice(position);
+                    presenter.removeDevice(position);
                     break;
                 case R.id.relay_toggler:
-                    switchDeviceRelay(position, subPosition, ((SwitchCompat) view).isChecked());
+                    presenter.switchDeviceRelay(position, subPosition, ((SwitchCompat) view).isChecked());
                     break;
             }
         });
+        mainRecyclerView.setAdapter(mainDisplayAdapter);
+
         mainHandler = new Handler() {
             public void handleMessage(Message msg) {
                 final int what = msg.what;
@@ -102,11 +99,20 @@ public class MainActivity extends AppCompatActivity {
                     case DO_UPDATE_DEVICE_VIEW:
                         mainDisplayAdapter.notifyItemChanged(msg.obj);
                         break;
+                    case DO_REMOVE_DEVICE_VIEW:
+                        mainDisplayAdapter.notifyItemRemoved((Integer) msg.obj);
+                        break;
+                    case DO_INIT_DEVICES:
+                        mainDisplayAdapter.setActiveDevices((List<Device>) msg.obj);
+                        mainDisplayAdapter.notifyDataSetChanged();
+                        break;
                 }
             }
         };
-        mainRecyclerView.setAdapter(mainDisplayAdapter);
         setUpNavigationView();
+
+        presenter = new MainPresenterImpl(this, mainHandler);
+        presenter.onCreate();
     }
 
 
@@ -120,84 +126,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpNavigationView() {
-        mainNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.add_device:
-                        addDevice();
-                        mainDrawer.closeDrawers();
-                        break;
-                    case R.id.about_page:
-                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        mainDrawer.closeDrawers();
-                        break;
-                }
-                return true;
+        mainNavigationView.setNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.add_device:
+                    presenter.addDevice();
+                    mainDrawer.closeDrawers();
+                    break;
+                case R.id.about_page:
+                    gotoAboutPage();
+                    mainDrawer.closeDrawers();
+                    break;
             }
+            return true;
         });
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mainDrawer, mainToolbar, R.string.open_drawer, R.string.close_drawer);
         mainDrawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-        refreshDevices();
+        presenter.onResume();
     }
 
-    private void refreshDevices() {
-        new Thread() {
-            public void run() {
-                activeDevices.clear();
-                activeDevices.addAll(deviceDao.loadAll());
-                mainDisplayAdapter.notifyDataSetChanged();
-            }
-        }.start();
+    public void gotoAboutPage() {
+        startActivity(new Intent(this, AboutActivity.class));
     }
 
-    private void addDevice() {
-        startActivity(new Intent(MainActivity.this, AddEditDeviceActivity.class));
-    }
-
-    private void editDevice(final int position) {
-        Intent intent = new Intent(getBaseContext(), AddEditDeviceActivity.class);
-        intent.putExtra(AddEditDeviceActivity.EDIT_DEVICE_ID_EXTRA, activeDevices.get(position).getId());
-        startActivity(intent);
-    }
-
-    private void removeDevice(int position) {
-        Device removedDevice = activeDevices.remove(position);
-        mainDisplayAdapter.notifyItemRemoved(position);
-        deviceDao.delete(removedDevice);
-    }
-
-    private void refreshDevice(Device device) {
-        device.setRefreshing(true);
-        mainDisplayAdapter.notifyItemChanged(device);
-        communicator.getDeviceStatus(device, MainActivity.this);
-    }
-
-    private void showDeviceDetails(int position) {
-        Intent intent = new Intent(getBaseContext(), DetailsActivity.class);
-        intent.putExtra(DetailsActivity.DEVICE_FOR_DETAILS, activeDevices.get(position).getId());
-        startActivity(intent);
-    }
-
-
-    private void switchDeviceRelay(int position, int subPosition, boolean isChecked) {
-        Device updatingDevice = activeDevices.get(position);
-        updatingDevice.setRefreshing(true);
-        mainDisplayAdapter.notifyItemChanged(updatingDevice);
-        RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
-        int newStatus = isChecked ? 1 : 0;
-        updatingRelay.getActualStatus().setValue(newStatus);
-        communicator.switchRelay(activeDevices.get(position), this, updatingRelay);
-    }
-
-    public Handler getMyHandler() {
+    public Handler getMainHandler() {
         return mainHandler;
     }
 }

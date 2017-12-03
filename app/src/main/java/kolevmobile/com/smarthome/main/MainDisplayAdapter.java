@@ -38,10 +38,13 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
         this.onItemViewClickListener = onItemViewClickListener;
     }
 
-    MainDisplayAdapter(List<Device> devices, Context context) {
-        this.activeDevices = devices;
+    MainDisplayAdapter(Context context) {
         this.context = context;
         expandedPositionSet = new HashSet<>();
+    }
+
+    public void setActiveDevices(List<Device> activeDevices) {
+        this.activeDevices = activeDevices;
     }
 
 
@@ -71,7 +74,7 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
         private DeviceViewHolder(View itemView) {
             super(itemView);
 
-            expandableLayout =  itemView.findViewById(R.id.expandable_layout);
+            expandableLayout = itemView.findViewById(R.id.expandable_layout);
 
             this.deviceNameTextView = itemView.findViewById(R.id.deviceNameTextView);
             this.deviceInfoTextView = itemView.findViewById(R.id.deviceInfoTextView);

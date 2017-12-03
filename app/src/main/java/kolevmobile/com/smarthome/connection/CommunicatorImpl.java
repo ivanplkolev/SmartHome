@@ -73,7 +73,7 @@ public class CommunicatorImpl implements Communicator{
                 Message message = new Message();
                 message.obj = device;
                 message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
-                activity.getMyHandler().sendMessage(message);
+                activity.getMainHandler().sendMessage(message);
             }
 
             @Override
@@ -115,7 +115,7 @@ public class CommunicatorImpl implements Communicator{
                 Message message = new Message();
                 message.obj = device;
                 message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
-                activity.getMyHandler().sendMessage(message);
+                activity.getMainHandler().sendMessage(message);
             }
 
             @Override
@@ -175,7 +175,7 @@ public class CommunicatorImpl implements Communicator{
         Message message = new Message();
         message.obj=device;
         message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
-        activity.getMyHandler().sendMessage(message);
+        activity.getMainHandler().sendMessage(message);
         deviceDao.update(device);
     }
 
