@@ -77,72 +77,8 @@ public class DeviceSenosrsFragment extends Fragment {
     }
 
 
-    private void addEditSensorModel(final SensorModel sensorModelIn, final int pos) {
-
-        LayoutInflater li = LayoutInflater.from(getActivity());
-        View promptsView = li.inflate(R.layout.add_sensor_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
 
 
-        final EditText sensorNameInput = promptsView.findViewById(R.id.sensor_name_input);
-        final EditText sensorDescriptionInput = promptsView.findViewById(R.id.sensor_description_input);
-        final EditText sensorKeyInput = promptsView.findViewById(R.id.sensor_key_input);
-        final EditText sensorUnitsInput = promptsView.findViewById(R.id.sensor_units_input);
-
-        if (sensorModelIn != null) {
-            sensorNameInput.setText(sensorModelIn.getName());
-            sensorDescriptionInput.setText(sensorModelIn.getDescription());
-            sensorKeyInput.setText(sensorModelIn.getKey());
-            sensorUnitsInput.setText(sensorModelIn.getUnits());
-
-        }
-        final SensorModel sensorModel = sensorModelIn != null ? sensorModelIn : new SensorModel();
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                sensorModel.setName(sensorNameInput.getText().toString());
-                                sensorModel.setDescription(sensorDescriptionInput.getText().toString());
-                                sensorModel.setKey(sensorKeyInput.getText().toString());
-                                sensorModel.setUnits(sensorUnitsInput.getText().toString());
-                                sensorModel.setDeviceId(getDevice().getId());
-
-
-                                if (sensorModelIn == null) {
-                                    getDevice().getSensorModelList().add(sensorModel);
-                                    mAdapter.notifyItemRangeChanged(getDevice().getSensorModelList().size() - 1, 1);
-                                    sensorModelDao.insert(sensorModel);
-                                } else {
-                                    mAdapter.notifyItemChanged(pos);
-                                    sensorModelDao.update(sensorModel);
-                                }
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-    }
-
-
-    private void deleteSensorModel(int position) {
-        SensorModel deleteingEntity = getDevice().getSensorModelList().remove(position);
-        mAdapter.notifyItemRemoved(position);
-        sensorModelDao.delete(deleteingEntity);
-    }
 
     private Device getDevice() {
         return ((AddEditDeviceActivity) getActivity()).getDevice();

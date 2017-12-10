@@ -19,8 +19,7 @@ import kolevmobile.com.smarthome.model.DeviceDao;
 
 public class AddEditDeviceActivity extends AppCompatActivity {
 
-    Device device;
-    DeviceDao deviceDao;
+
 
     public static final String EDIT_DEVICE_ID_EXTRA = "EDIT_DEVICE_ID_EXTRA";
 
@@ -48,8 +47,7 @@ public class AddEditDeviceActivity extends AppCompatActivity {
         });
 
 
-        DaoSession daoSession = ((App) getApplication()).getDaoSession();
-        deviceDao = daoSession.getDeviceDao();
+
         Long deviceId = getIntent().getLongExtra(EDIT_DEVICE_ID_EXTRA, 0L);
         if (deviceId != 0L) {
             device = deviceDao.load(deviceId);
@@ -95,32 +93,6 @@ public class AddEditDeviceActivity extends AppCompatActivity {
     }
 
 
-    public void saveDevice(View v) {
-
-        if (device == null) {
-            device = new Device();
-            deviceGeneralFragment.copyfromFields(device);
-            deviceDao.insert(device);
-        } else {
-            deviceGeneralFragment.copyfromFields(device);
-            deviceDao.update(device);
-        }
-
-        if (adapter.getCount() == 1) {
-
-
-            TabLayout tabLayout = findViewById(R.id.tab_layout);
-            tabLayout.addTab(tabLayout.newTab().setText("Sensors"));
-            tabLayout.addTab(tabLayout.newTab().setText("Realays"));
-            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-            viewPager = findViewById(R.id.pager);
-            adapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
-            viewPager.setAdapter(adapter);
-        }
-
-        viewPager.setCurrentItem(1, true);
-    }
 
     public void cancelSaving(View v) {
         onBackPressed();

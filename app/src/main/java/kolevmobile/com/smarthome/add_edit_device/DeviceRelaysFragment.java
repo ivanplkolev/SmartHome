@@ -79,72 +79,8 @@ public class DeviceRelaysFragment extends Fragment {
         return view;
     }
 
-    private void addEditRelayModel(final RelayModel relayModelIn, final int pos) {
-
-        LayoutInflater li = LayoutInflater.from(getActivity());
-        View promptsView = li.inflate(R.layout.add_relay_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
 
 
-        final EditText relayNameInput = promptsView.findViewById(R.id.relay_name_input);
-        final EditText relayDescriptionInput = promptsView.findViewById(R.id.relay_description_input);
-        final EditText relayKeyInput = promptsView.findViewById(R.id.relay_key_input);
-//        final EditText relayUnitsInput = promptsView.findViewById(R.id.relay_units_input);
-
-        if (relayModelIn != null) {
-            relayNameInput.setText(relayModelIn.getName());
-            relayDescriptionInput.setText(relayModelIn.getDescription());
-            relayKeyInput.setText(relayModelIn.getKey());
-//            relayUnitsInput.setText(relayModelIn.getUnits());
-
-        }
-        final RelayModel relayModel = relayModelIn != null ? relayModelIn : new RelayModel();
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                relayModel.setName(relayNameInput.getText().toString());
-                                relayModel.setDescription(relayDescriptionInput.getText().toString());
-                                relayModel.setKey(relayKeyInput.getText().toString());
-//                                relayModel.setUnits(relayUnitsInput.getText().toString());
-                                relayModel.setDeviceId(getDevice().getId());
-
-
-                                if (relayModelIn == null) {
-                                    getDevice().getRelayModelList().add(relayModel);
-                                    mAdapter.notifyItemRangeChanged(getDevice().getRelayModelList().size() - 1, 1);
-                                    relayModelDao.insert(relayModel);
-                                } else {
-                                    mAdapter.notifyItemChanged(pos);
-                                    relayModelDao.update(relayModel);
-                                }
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-    }
-
-
-    private void deleteRelayModel(int position) {
-        RelayModel deleteingEntity = getDevice().getRelayModelList().remove(position);
-        mAdapter.notifyItemRemoved(position);
-        relayModelDao.delete(deleteingEntity);
-    }
 
 
     private Device getDevice() {
