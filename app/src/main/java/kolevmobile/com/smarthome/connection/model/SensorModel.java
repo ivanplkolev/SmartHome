@@ -5,6 +5,14 @@ package kolevmobile.com.smarthome.connection.model;
  */
 
 public class SensorModel {
-    String key;
-    float value;
+   private String key;
+   private  float value;
+
+    public String getKey() {
+        return key;
+    }
+
+    public float getValue() {
+        return value;
+    }
 }

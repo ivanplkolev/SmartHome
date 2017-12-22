@@ -7,8 +7,31 @@ import java.util.List;
  */
 
 public class Device {
-    String error;
-    List<SensorModel> sensorData;
-    List<RelayModel> relayData;
+    private String error;
+    private List<SensorModel> sensorData;
+    private List<RelayModel> relayData;
 
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public List<SensorModel> getSensorData() {
+        return sensorData;
+    }
+
+    public void setSensorData(List<SensorModel> sensorData) {
+        this.sensorData = sensorData;
+    }
+
+    public List<RelayModel> getRelayData() {
+        return relayData;
+    }
+
+    public void setRelayData(List<RelayModel> relayData) {
+        this.relayData = relayData;
+    }
 }

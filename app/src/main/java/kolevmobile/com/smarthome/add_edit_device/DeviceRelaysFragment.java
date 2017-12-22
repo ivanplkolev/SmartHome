@@ -5,7 +5,6 @@ package kolevmobile.com.smarthome.add_edit_device;
  */
 
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -18,46 +17,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import javax.inject.Inject;
+
 import kolevmobile.com.smarthome.App;
-import kolevmobile.com.smarthome.ItemButtonObserver;
 import kolevmobile.com.smarthome.R;
-import kolevmobile.com.smarthome.model.DaoSession;
-import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.RelayModel;
-import kolevmobile.com.smarthome.model.RelayModelDao;
 
 public class DeviceRelaysFragment extends Fragment {
 
+    @Inject
+    AddEditPresenter presenter;
+
     private RecyclerView recyclerView;
     private RelaysAdapter mAdapter;
-
-
     private FloatingActionButton addRelayModelFab;
-    DaoSession daoSession;
-    RelayModelDao relayModelDao;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.device_relays_layout, container, false);
-
         recyclerView = view.findViewById(R.id.relays_list_view);
-
         addRelayModelFab = view.findViewById(R.id.add_relay_model_fab);
 
+        ((App) getActivity().getApplication()).getPresenterComponent().inject(this);
 
-        mAdapter = new RelaysAdapter(getDevice().getRelayModelList());
 
-        mAdapter.setOnItemViewClickListener(new ItemButtonObserver() {
-            @Override
-            public void onClick(View view, int position, int subPosition) {
-                switch (view.getId()) {
-                    case R.id.editButton:
-                        addEditRelayModel(getDevice().getRelayModelList().get(position), position);
-                        break;
-                    case R.id.deleteButton:
-                        deleteRelayModel(position);
-                        break;
-                }
+        mAdapter = new RelaysAdapter(presenter.getDevice().getRelayModelList());
+
+        mAdapter.setOnItemViewClickListener((view1, position, subPosition) -> {
+            switch (view1.getId()) {
+                case R.id.editButton:
+                    addEditRelayModel(position);
+                    break;
+                case R.id.deleteButton:
+                    deleteRelayModel(position);
+                    break;
             }
         });
 
@@ -65,26 +59,53 @@ public class DeviceRelaysFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-
-        addRelayModelFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeviceRelaysFragment.this.addEditRelayModel(null, 0);
-            }
-        });
-
-        daoSession = ((App) getActivity().getApplication()).getDaoSession();
-        relayModelDao = daoSession.getRelayModelDao();
-        
+        addRelayModelFab.setOnClickListener(view12 -> DeviceRelaysFragment.this.addEditRelayModel(-1));
         return view;
     }
 
+    public void addEditRelayModel(final int pos) {
+        LayoutInflater li = LayoutInflater.from(getActivity());
+        View promptsView = li.inflate(R.layout.add_relay_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptsView);
 
+        final EditText relayNameInput = promptsView.findViewById(R.id.relay_name_input);
+        final EditText relayDescriptionInput = promptsView.findViewById(R.id.relay_description_input);
+        final EditText relayKeyInput = promptsView.findViewById(R.id.relay_key_input);
 
+        if (pos != -1) {
+            RelayModel relayModelIn = presenter.getDevice().getRelayModelList().get(pos);
+            relayNameInput.setText(relayModelIn.getName());
+            relayDescriptionInput.setText(relayModelIn.getDescription());
+            relayKeyInput.setText(relayModelIn.getKey());
+        }
 
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        (dialog, id) -> {
+                            String name = relayNameInput.getText().toString();
+                            String description = relayDescriptionInput.getText().toString();
+                            String key = relayKeyInput.getText().toString();
+                            presenter.saveDeviceRelayModel(pos, name, description, key);
+                            if (pos == -1) {
+                                mAdapter.notifyItemRangeChanged(presenter.getDevice().getRelayModelList().size() - 1, 1);
+                            } else {
+                                mAdapter.notifyItemChanged(pos);
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        (dialog, id) -> dialog.cancel());
 
-    private Device getDevice() {
-        return ((AddEditDeviceActivity) getActivity()).getDevice();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
     }
+
+    public void deleteRelayModel(int position) {
+        presenter.deleteRelayModel(position);
+        mAdapter.notifyItemRemoved(position);
+    }
+
 
 }

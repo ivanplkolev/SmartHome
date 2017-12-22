@@ -1,21 +1,12 @@
 package kolevmobile.com.smarthome.add_edit_device;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-
-import kolevmobile.com.smarthome.App;
-import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.DaoSession;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.DeviceDao;
 import kolevmobile.com.smarthome.model.RelayModel;
+import kolevmobile.com.smarthome.model.RelayModelDao;
 import kolevmobile.com.smarthome.model.SensorModel;
+import kolevmobile.com.smarthome.model.SensorModelDao;
 
 /**
  * Created by me on 03/12/2017.
@@ -24,184 +15,79 @@ import kolevmobile.com.smarthome.model.SensorModel;
 public class AddEditPresenterImpl implements AddEditPresenter {
 
     Device device;
+
     DeviceDao deviceDao;
+    SensorModelDao sensorModelDao;
+    RelayModelDao relayModelDao;
 
-    Activity context;
-
-    AddEditPresenterImpl(Activity context){
-        this.context=context;
-    }
-
-
-    protected void onCreate(){
-
-        DaoSession daoSession = ((App) context.getApplication()).getDaoSession();
+    public AddEditPresenterImpl(DaoSession daoSession) {
         deviceDao = daoSession.getDeviceDao();
+        sensorModelDao = daoSession.getSensorModelDao();
+        relayModelDao = daoSession.getRelayModelDao();
     }
 
-    public void saveDevice(View v) {
+    public void init(Long deviceId) {
+        if (deviceId != 0L) {
+            device = deviceDao.load(deviceId);
+        }
+    }
 
-        if (device == null) {
-            device = new Device();
-            deviceGeneralFragment.copyfromFields(device);
-            deviceDao.insert(device);
+    public Device getDevice() {
+        return device;
+    }
+
+    public Device createDevice() {
+        if (this.device != null) {
+            throw new IllegalStateException();
+        }
+        this.device = new Device();
+        deviceDao.insert(device);
+        return device;
+    }
+
+    public void updateDevice() {
+        deviceDao.update(device);
+    }
+
+
+    public void addEditSensorModel(int pos, String name, String desc, String key, String units) {
+        final SensorModel sensorModel = pos != -1 ? device.getSensorModelList().get(pos) : new SensorModel();
+        sensorModel.setName(name);
+        sensorModel.setDescription(desc);
+        sensorModel.setKey(key);
+        sensorModel.setUnits(units);
+        sensorModel.setDeviceId(device.getId());
+        if (pos == -1) {
+            device.getSensorModelList().add(sensorModel);
+            sensorModelDao.insert(sensorModel);
         } else {
-            deviceGeneralFragment.copyfromFields(device);
-            deviceDao.update(device);
+            sensorModelDao.update(sensorModel);
         }
-
-        if (adapter.getCount() == 1) {
-
-
-            TabLayout tabLayout = findViewById(R.id.tab_layout);
-            tabLayout.addTab(tabLayout.newTab().setText("Sensors"));
-            tabLayout.addTab(tabLayout.newTab().setText("Realays"));
-            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-            viewPager = findViewById(R.id.pager);
-            adapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
-            viewPager.setAdapter(adapter);
-        }
-
-        viewPager.setCurrentItem(1, true);
     }
 
-    private void addEditRelayModel(final RelayModel relayModelIn, final int pos) {
-
-        LayoutInflater li = LayoutInflater.from(getActivity());
-        View promptsView = li.inflate(R.layout.add_relay_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
-
-
-        final EditText relayNameInput = promptsView.findViewById(R.id.relay_name_input);
-        final EditText relayDescriptionInput = promptsView.findViewById(R.id.relay_description_input);
-        final EditText relayKeyInput = promptsView.findViewById(R.id.relay_key_input);
-//        final EditText relayUnitsInput = promptsView.findViewById(R.id.relay_units_input);
-
-        if (relayModelIn != null) {
-            relayNameInput.setText(relayModelIn.getName());
-            relayDescriptionInput.setText(relayModelIn.getDescription());
-            relayKeyInput.setText(relayModelIn.getKey());
-//            relayUnitsInput.setText(relayModelIn.getUnits());
-
-        }
-        final RelayModel relayModel = relayModelIn != null ? relayModelIn : new RelayModel();
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                relayModel.setName(relayNameInput.getText().toString());
-                                relayModel.setDescription(relayDescriptionInput.getText().toString());
-                                relayModel.setKey(relayKeyInput.getText().toString());
-//                                relayModel.setUnits(relayUnitsInput.getText().toString());
-                                relayModel.setDeviceId(getDevice().getId());
-
-
-                                if (relayModelIn == null) {
-                                    getDevice().getRelayModelList().add(relayModel);
-                                    mAdapter.notifyItemRangeChanged(getDevice().getRelayModelList().size() - 1, 1);
-                                    relayModelDao.insert(relayModel);
-                                } else {
-                                    mAdapter.notifyItemChanged(pos);
-                                    relayModelDao.update(relayModel);
-                                }
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-    }
-
-
-    private void deleteRelayModel(int position) {
-        RelayModel deleteingEntity = getDevice().getRelayModelList().remove(position);
-        mAdapter.notifyItemRemoved(position);
-        relayModelDao.delete(deleteingEntity);
-    }
-
-
-    private void addEditSensorModel(final SensorModel sensorModelIn, final int pos) {
-
-        LayoutInflater li = LayoutInflater.from(getActivity());
-        View promptsView = li.inflate(R.layout.add_sensor_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
-
-
-        final EditText sensorNameInput = promptsView.findViewById(R.id.sensor_name_input);
-        final EditText sensorDescriptionInput = promptsView.findViewById(R.id.sensor_description_input);
-        final EditText sensorKeyInput = promptsView.findViewById(R.id.sensor_key_input);
-        final EditText sensorUnitsInput = promptsView.findViewById(R.id.sensor_units_input);
-
-        if (sensorModelIn != null) {
-            sensorNameInput.setText(sensorModelIn.getName());
-            sensorDescriptionInput.setText(sensorModelIn.getDescription());
-            sensorKeyInput.setText(sensorModelIn.getKey());
-            sensorUnitsInput.setText(sensorModelIn.getUnits());
-
-        }
-        final SensorModel sensorModel = sensorModelIn != null ? sensorModelIn : new SensorModel();
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                sensorModel.setName(sensorNameInput.getText().toString());
-                                sensorModel.setDescription(sensorDescriptionInput.getText().toString());
-                                sensorModel.setKey(sensorKeyInput.getText().toString());
-                                sensorModel.setUnits(sensorUnitsInput.getText().toString());
-                                sensorModel.setDeviceId(getDevice().getId());
-
-
-                                if (sensorModelIn == null) {
-                                    getDevice().getSensorModelList().add(sensorModel);
-                                    mAdapter.notifyItemRangeChanged(getDevice().getSensorModelList().size() - 1, 1);
-                                    sensorModelDao.insert(sensorModel);
-                                } else {
-                                    mAdapter.notifyItemChanged(pos);
-                                    sensorModelDao.update(sensorModel);
-                                }
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-    }
-
-
-    private void deleteSensorModel(int position) {
-        SensorModel deleteingEntity = getDevice().getSensorModelList().remove(position);
-        mAdapter.notifyItemRemoved(position);
+    public void deleteSensorModel(int position) {
+        SensorModel deleteingEntity = device.getSensorModelList().remove(position);
         sensorModelDao.delete(deleteingEntity);
     }
 
+    public void saveDeviceRelayModel(int pos, String relayModelName, String relayModeldesc, String key) {
+        RelayModel relayModel = pos != -1 ? device.getRelayModelList().get(pos) : new RelayModel();
+        relayModel.setName(relayModelName);
+        relayModel.setDescription(relayModeldesc);
+        relayModel.setKey(key);
+        relayModel.setDeviceId(device.getId());
+        if (pos == -1) {
+            device.getRelayModelList().add(relayModel);
+            relayModelDao.insert(relayModel);
+        } else {
+            relayModelDao.update(relayModel);
+        }
+    }
 
+    public void deleteRelayModel(int position) {
+        RelayModel deleteingEntity = device.getRelayModelList().remove(position);
+        relayModelDao.delete(deleteingEntity);
+    }
 
 
 }

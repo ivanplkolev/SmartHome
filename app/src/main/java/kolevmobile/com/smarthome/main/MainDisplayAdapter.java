@@ -176,7 +176,7 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
 
     @Override
     public int getItemCount() {
-        return activeDevices.size();
+        return activeDevices != null ? activeDevices.size() : 0;
     }
 
     public void notifyItemChanged(Object device) {

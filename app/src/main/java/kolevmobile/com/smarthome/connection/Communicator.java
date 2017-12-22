@@ -1,6 +1,6 @@
 package kolevmobile.com.smarthome.connection;
 
-import kolevmobile.com.smarthome.main.MainActivity;
+import kolevmobile.com.smarthome.main.MainPresenter;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.RelayModel;
 
@@ -10,7 +10,10 @@ import kolevmobile.com.smarthome.model.RelayModel;
 
 public interface Communicator {
 
-    void getDeviceStatus(Device device, MainActivity activity);
+    void getDeviceStatus(Device device);
 
-    void switchRelay(Device device, MainActivity activity, RelayModel relayModel);
+    void switchRelay(Device device, RelayModel relayModel);
+
+    void setPresenter(MainPresenter presenter);
+
 }

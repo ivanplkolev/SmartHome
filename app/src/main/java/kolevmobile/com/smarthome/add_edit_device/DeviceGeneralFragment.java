@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import javax.inject.Inject;
+
+import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.Device;
 
@@ -22,9 +25,15 @@ public class DeviceGeneralFragment extends Fragment {
     EditText deviceUrl;
     EditText devicePort;
 
+    @Inject
+    AddEditPresenter presenter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.device_general_layout, container, false);
+
+        ((App)getActivity().getApplication()).getPresenterComponent().inject(this);
+
         initializeFields(view);
         return view;
     }
