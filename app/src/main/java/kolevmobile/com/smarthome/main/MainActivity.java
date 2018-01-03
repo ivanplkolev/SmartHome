@@ -12,8 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.widget.ToggleButton;
 
 import java.util.List;
 
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     presenter.removeDevice(position);
                     break;
                 case R.id.relay_toggler:
-                    presenter.switchDeviceRelay(position, subPosition, ((SwitchCompat) view).isChecked());
+                    presenter.switchDeviceRelay(position, subPosition, ((ToggleButton) view).isChecked());
                     break;
             }
         });

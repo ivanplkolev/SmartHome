@@ -30,5 +30,18 @@
     <string name="device_general_layout_port_default">80</string>
     <string name="device_general_layout_description">Description</string>
     <string name="device_general_layout_name">Name</string>
+    <string name="menu_add_new_device">Add new Device</string>
+    <string name="menu_other">Other</string>
+    <string name="menu_new_title_3">new title 3</string>
+    <string name="relay_row_key">Key</string>
+    <string name="delay_row_description">Description</string>
+    <string name="relay_row_name">Name</string>
+    <string name="sensor_display_name">Name</string>
+    <string name="sensor_display_value">Value</string>
+    <string name="sensor_display_units">Units</string>
+    <string name="sensor_row_description">Description</string>
+    <string name="sensor_row_key">Key</string>
+    <string name="sensor_row_units">Units</string>
+    <string name="sensor_row_name">Name</string>
 
 </resources>

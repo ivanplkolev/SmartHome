@@ -69,7 +69,7 @@
                 android:gravity="right"
                 android:layout_margin="5sp"
                 android:textStyle="italic"
-                android:text="Name" />
+                android:text="@string/relay_row_name" />
 
             <TextView
                 android:id="@+id/relay_name_text_view"
@@ -95,7 +95,7 @@
                 android:layout_margin="5sp"
                 android:textStyle="italic"
                 android:gravity="right"
-                android:text="Description" />
+                android:text="@string/delay_row_description" />
 
             <TextView
                 android:id="@+id/relay_description_text_view"
@@ -120,7 +120,7 @@
                 android:gravity="right"
                 android:layout_margin="5sp"
                 android:textStyle="italic"
-                android:text="Key" />
+                android:text="@string/relay_row_key" />
 
             <TextView
                 android:id="@+id/relay_key_text_view"

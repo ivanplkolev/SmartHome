@@ -25,15 +25,20 @@
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.SwitchCompat
+            <ToggleButton
                 android:id="@+id/relay_toggler"
                 android:padding="15sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48sp"
+                android:layout_height="48sp"
                 android:layout_gravity="center"
+                android:textOn=""
+                android:textOff=""
+                android:background="@drawable/relay_switch_selector"
                 android:gravity="center" />
 
             <TextView
@@ -42,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="default1"
+                android:text=""
                 android:textSize="20sp"
                 android:textStyle="italic" />
         </RelativeLayout>

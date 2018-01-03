@@ -6,15 +6,15 @@
         <item
             android:id="@+id/add_device"
             android:icon="@drawable/ic_add_black_24dp"
-            android:title="Add new Device" />
+            android:title="@string/menu_add_new_device" />
 
     </group>
 
-    <item android:title="Other">
+    <item android:title="@string/menu_other">
         <menu>
             <item
                 android:id="@+id/about_page"
-                android:title="new title 3" />
+                android:title="@string/menu_new_title_3" />
         </menu>
     </item>
 

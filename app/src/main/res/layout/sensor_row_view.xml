@@ -70,7 +70,7 @@
                 android:gravity="right"
                 android:layout_margin="5sp"
                 android:textStyle="italic"
-                android:text="Name" />
+                android:text="@string/sensor_row_name" />
 
             <TextView
                 android:id="@+id/sensor_name_text_view"
@@ -96,7 +96,7 @@
                 android:layout_margin="5sp"
                 android:textStyle="italic"
                 android:gravity="right"
-                android:text="Description" />
+                android:text="@string/sensor_row_description" />
 
             <TextView
                 android:id="@+id/sensor_description_text_view"
@@ -121,7 +121,7 @@
                 android:gravity="right"
                 android:layout_margin="5sp"
                 android:textStyle="italic"
-                android:text="Key" />
+                android:text="@string/sensor_row_key" />
 
             <TextView
                 android:id="@+id/sensor_key_text_view"
@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:textStyle="italic"
-                android:text="Units" />
+                android:text="@string/sensor_row_units" />
 
             <TextView
                 android:id="@+id/sensor_units_text_view"

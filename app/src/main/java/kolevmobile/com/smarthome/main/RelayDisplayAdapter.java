@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class RelayDisplayAdapter extends RecyclerView.Adapter<RelayDisplayAdapte
     class MyView extends RecyclerView.ViewHolder {
         private TextView relayTogglerInfo;
         private TextView relayName;
-        private SwitchCompat relayTogglerButton;
+        private ToggleButton relayTogglerButton;
 
         MyView(View view) {
             super(view);
