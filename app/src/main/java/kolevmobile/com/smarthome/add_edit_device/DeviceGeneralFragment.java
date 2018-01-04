@@ -9,6 +9,8 @@ import android.widget.EditText;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.Device;
@@ -19,30 +21,27 @@ import kolevmobile.com.smarthome.model.Device;
 
 public class DeviceGeneralFragment extends Fragment {
 
-    //textfields
-    EditText deviceName;
-    EditText deviceDescription;
-    EditText deviceUrl;
-    EditText devicePort;
-
     @Inject
     AddEditPresenter presenter;
+
+    @BindView(R.id.device_name_input)
+    EditText deviceName;
+    @BindView(R.id.device_description_input)
+    EditText deviceDescription;
+    @BindView(R.id.device_url_input)
+    EditText deviceUrl;
+    @BindView(R.id.device_port_input)
+    EditText devicePort;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.device_general_layout, container, false);
-
-        ((App)getActivity().getApplication()).getPresenterComponent().inject(this);
-
-        initializeFields(view);
+        ((App) getActivity().getApplication()).getPresenterComponent().inject(this);
+        ButterKnife.bind(this, view);
+        if (presenter.getDevice() != null) {
+            copyToFields(presenter.getDevice());
+        }
         return view;
-    }
-
-    private void initializeFields(View view) {
-        deviceName = view.findViewById(R.id.device_name_input);
-        deviceDescription = view.findViewById(R.id.device_description_input);
-        deviceUrl = view.findViewById(R.id.device_url_input);
-        devicePort = view.findViewById(R.id.device_port_input);
     }
 
     public void copyToFields(Device device) {

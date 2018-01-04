@@ -11,11 +11,6 @@ import javax.inject.Inject;
 
 import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
-import kolevmobile.com.smarthome.model.Device;
-
-/**
- * Created by me on 29/10/2017.
- */
 
 public class AddEditDeviceActivity extends AppCompatActivity {
 
@@ -25,8 +20,8 @@ public class AddEditDeviceActivity extends AppCompatActivity {
 
     public static final String EDIT_DEVICE_ID_EXTRA = "EDIT_DEVICE_ID_EXTRA";
 
-    ViewPager viewPager;
-    DeviceFragmentPagerAdapter adapter;
+    private ViewPager viewPager;
+    private DeviceFragmentPagerAdapter pagerAdapter;
 
     private DeviceGeneralFragment deviceGeneralFragment;
     private DeviceSenosrsFragment deviceSenosrsFragment;
@@ -39,46 +34,32 @@ public class AddEditDeviceActivity extends AppCompatActivity {
 
         ((App)getApplication()).getPresenterComponent().inject(this);
 
-
-        Toolbar toolbar = findViewById(R.id.main_toolbar);
-        toolbar.setTitle("Add edit device");
-        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        prepareToolbar();
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Device"));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.device)));
         viewPager = findViewById(R.id.pager);
         deviceGeneralFragment = new DeviceGeneralFragment();
         deviceSenosrsFragment = new DeviceSenosrsFragment();
         deviceRelaysFragment = new DeviceRelaysFragment();
 
         Long deviceId = getIntent().getLongExtra(AddEditDeviceActivity.EDIT_DEVICE_ID_EXTRA, 0L);
-        presenter.init(deviceId);
+        presenter.initDevice(deviceId);
 
         if (presenter.getDevice() != null) {
-            tabLayout.addTab(tabLayout.newTab().setText("Sensors"));
-            tabLayout.addTab(tabLayout.newTab().setText("Relays"));
-            adapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
+            tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.sensors)));
+            tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.relays)));
+            pagerAdapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
         } else {
-            adapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment);
-        }
-
-        if (presenter.getDevice() != null) {
-            deviceGeneralFragment.copyToFields(presenter.getDevice());
+            pagerAdapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment);
         }
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(pagerAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -86,38 +67,33 @@ public class AddEditDeviceActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
     }
 
-
-    public void cancelSaving(View v) {
-        onBackPressed();
+    private void prepareToolbar() {
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        toolbar.setTitle(getResources().getString(R.string.Add_edit_device));
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
+
     public void saveDevice(View v) {
+        presenter.createDevice(deviceGeneralFragment);
 
-        Device device = presenter.createDevice();
-        deviceGeneralFragment.copyfromFields(device);
-        presenter.updateDevice();
-
-        if (adapter.getCount() == 1) {
-
-
+        if (pagerAdapter.getCount() == 1) {
             TabLayout tabLayout = findViewById(R.id.tab_layout);
-            tabLayout.addTab(tabLayout.newTab().setText("Sensors"));
-            tabLayout.addTab(tabLayout.newTab().setText("Realays"));
+            tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.sensors)));
+            tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.relays)));
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
             viewPager = findViewById(R.id.pager);
-            adapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
-            viewPager.setAdapter(adapter);
+            pagerAdapter = new DeviceFragmentPagerAdapter(getSupportFragmentManager(), deviceGeneralFragment, deviceSenosrsFragment, deviceRelaysFragment);
+            viewPager.setAdapter(pagerAdapter);
         }
 
         viewPager.setCurrentItem(1, true);

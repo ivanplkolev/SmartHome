@@ -14,11 +14,11 @@ import kolevmobile.com.smarthome.model.SensorModelDao;
 
 public class AddEditPresenterImpl implements AddEditPresenter {
 
-    Device device;
+    private Device device;
 
-    DeviceDao deviceDao;
-    SensorModelDao sensorModelDao;
-    RelayModelDao relayModelDao;
+    private DeviceDao deviceDao;
+    private SensorModelDao sensorModelDao;
+    private RelayModelDao relayModelDao;
 
     public AddEditPresenterImpl(DaoSession daoSession) {
         deviceDao = daoSession.getDeviceDao();
@@ -26,7 +26,7 @@ public class AddEditPresenterImpl implements AddEditPresenter {
         relayModelDao = daoSession.getRelayModelDao();
     }
 
-    public void init(Long deviceId) {
+    public void initDevice(Long deviceId) {
         if (deviceId != 0L) {
             device = deviceDao.load(deviceId);
         }
@@ -36,22 +36,17 @@ public class AddEditPresenterImpl implements AddEditPresenter {
         return device;
     }
 
-    public Device createDevice() {
-        if (this.device != null) {
+    public void createDevice(DeviceGeneralFragment fragment) {
+        if (device != null) {
             throw new IllegalStateException();
         }
-        this.device = new Device();
+        device = new Device();
+        fragment.copyfromFields(device);
         deviceDao.insert(device);
-        return device;
     }
-
-    public void updateDevice() {
-        deviceDao.update(device);
-    }
-
 
     public void addEditSensorModel(int pos, String name, String desc, String key, String units) {
-        final SensorModel sensorModel = pos != -1 ? device.getSensorModelList().get(pos) : new SensorModel();
+        SensorModel sensorModel = pos != -1 ? device.getSensorModelList().get(pos) : new SensorModel();
         sensorModel.setName(name);
         sensorModel.setDescription(desc);
         sensorModel.setKey(key);

@@ -2,13 +2,14 @@ package kolevmobile.com.smarthome.add_edit_device;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.ItemButtonObserver;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.RelayModel;
@@ -24,47 +25,33 @@ public class RelaysAdapter extends RecyclerView.Adapter<RelaysAdapter.MyViewHold
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView nameTextField;
-        private TextView descriptionTextField;
-        private TextView keyTextField;
+        @BindView(R.id.relay_name_text_view)
+        TextView nameTextField;
+        @BindView(R.id.relay_description_text_view)
+        TextView descriptionTextField;
+        @BindView(R.id.relay_key_text_view)
+        TextView keyTextField;
         View editButton;
         View deleteButton;
         View buttonsLayout;
 
         public MyViewHolder(View view) {
             super(view);
-            nameTextField = view.findViewById(R.id.relay_name_text_view);
-            descriptionTextField = view.findViewById(R.id.relay_description_text_view);
-            keyTextField = (TextView) view.findViewById(R.id.relay_key_text_view);
+            ButterKnife.bind(this, view);
 
             View relayRowBaseLayout = itemView.findViewById(R.id.relay_row_base_layout);
             buttonsLayout = itemView.findViewById(R.id.relay_row_buttons_layout);
-            relayRowBaseLayout.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View var1, MotionEvent var2) {
-                    boolean vissible = buttonsLayout.getVisibility() == View.VISIBLE;
-                    buttonsLayout.setVisibility(vissible ? View.INVISIBLE : View.VISIBLE);
-                    return false;
-                }
+            relayRowBaseLayout.setOnTouchListener((var1, var2) -> {
+                boolean vissible = buttonsLayout.getVisibility() == View.VISIBLE;
+                buttonsLayout.setVisibility(vissible ? View.INVISIBLE : View.VISIBLE);
+                return false;
             });
-            this.editButton = itemView.findViewById(R.id.editButton);
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onItemViewClickListener.onClick(editButton, getPosition(), 0);
-                }
-            });
-            this.deleteButton = itemView.findViewById(R.id.deleteButton);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onItemViewClickListener.onClick(deleteButton, getPosition(), 0);
-                }
-            });
-
+            editButton = itemView.findViewById(R.id.editButton);
+            editButton.setOnClickListener(view12 -> onItemViewClickListener.onClick(editButton, getPosition(), 0));
+            deleteButton = itemView.findViewById(R.id.deleteButton);
+            deleteButton.setOnClickListener(view1 -> onItemViewClickListener.onClick(deleteButton, getPosition(), 0));
         }
     }
-
 
     public RelaysAdapter(List<RelayModel> relayModelList) {
         this.relayModelList = relayModelList;
@@ -74,7 +61,6 @@ public class RelaysAdapter extends RecyclerView.Adapter<RelaysAdapter.MyViewHold
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.relay_row_view, parent, false);
-
         return new MyViewHolder(itemView);
     }
 

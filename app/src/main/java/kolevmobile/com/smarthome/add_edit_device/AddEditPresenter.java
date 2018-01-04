@@ -11,7 +11,7 @@ public interface AddEditPresenter {
 
     Device getDevice();
 
-    void init(Long deviceId);
+    void initDevice(Long deviceId);
 
     void deleteSensorModel(int pos);
 
@@ -21,7 +21,5 @@ public interface AddEditPresenter {
 
     void saveDeviceRelayModel(int pos, String relayModelName, String relayModeldesc, String key);
 
-    Device createDevice();
-
-    void updateDevice();
+    void createDevice(DeviceGeneralFragment fragment);
 }

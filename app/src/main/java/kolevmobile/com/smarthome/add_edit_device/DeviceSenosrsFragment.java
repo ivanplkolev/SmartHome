@@ -18,6 +18,8 @@ import android.widget.EditText;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.SensorModel;
@@ -28,17 +30,20 @@ public class DeviceSenosrsFragment extends Fragment {
     @Inject
     AddEditPresenter presenter;
 
-    private RecyclerView recyclerView;
+    @BindView(R.id.sensors_list_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.add_sensor_model_fab)
+    FloatingActionButton addSensorModelFab;
+
     private SensorsAdapter mAdapter;
-    private FloatingActionButton addSensorModelFab;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.device_sensors_layout, container, false);
-        ((App) getActivity().getApplication()).getPresenterComponent().inject(this);
+        ButterKnife.bind(this, view);
 
-        recyclerView = view.findViewById(R.id.sensors_list_view);
-        addSensorModelFab = view.findViewById(R.id.add_sensor_model_fab);
+        ((App) getActivity().getApplication()).getPresenterComponent().inject(this);
 
         mAdapter = new SensorsAdapter(presenter.getDevice().getSensorModelList());
 
@@ -64,7 +69,6 @@ public class DeviceSenosrsFragment extends Fragment {
 
 
     public void addEditSensorModel(int pos) {
-
         LayoutInflater li = LayoutInflater.from(getActivity());
         View promptsView = li.inflate(R.layout.add_sensor_dialog, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -81,9 +85,8 @@ public class DeviceSenosrsFragment extends Fragment {
             sensorDescriptionInput.setText(sensorModelIn.getDescription());
             sensorKeyInput.setText(sensorModelIn.getKey());
             sensorUnitsInput.setText(sensorModelIn.getUnits());
-
         }
-        // set dialog message
+
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("OK",
@@ -93,7 +96,6 @@ public class DeviceSenosrsFragment extends Fragment {
                             String key = sensorNameInput.getText().toString();
                             String units = sensorNameInput.getText().toString();
                             presenter.addEditSensorModel(pos, name, description, key, units);
-
                             if (pos == -1) {
                                 mAdapter.notifyItemRangeChanged(presenter.getDevice().getSensorModelList().size() - 1, 1);
                             } else {
@@ -102,7 +104,6 @@ public class DeviceSenosrsFragment extends Fragment {
                         })
                 .setNegativeButton("Cancel",
                         (dialog, id) -> dialog.cancel());
-
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }

@@ -19,6 +19,8 @@ import android.widget.EditText;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.RelayModel;
@@ -28,16 +30,17 @@ public class DeviceRelaysFragment extends Fragment {
     @Inject
     AddEditPresenter presenter;
 
-    private RecyclerView recyclerView;
-    private RelaysAdapter mAdapter;
-    private FloatingActionButton addRelayModelFab;
+    @BindView(R.id.relays_list_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.add_relay_model_fab)
+    FloatingActionButton addRelayModelFab;
 
+    private RelaysAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.device_relays_layout, container, false);
-        recyclerView = view.findViewById(R.id.relays_list_view);
-        addRelayModelFab = view.findViewById(R.id.add_relay_model_fab);
+        ButterKnife.bind(this, view);
 
         ((App) getActivity().getApplication()).getPresenterComponent().inject(this);
 
@@ -96,9 +99,7 @@ public class DeviceRelaysFragment extends Fragment {
                         })
                 .setNegativeButton("Cancel",
                         (dialog, id) -> dialog.cancel());
-
         AlertDialog alertDialog = alertDialogBuilder.create();
-
         alertDialog.show();
     }
 
