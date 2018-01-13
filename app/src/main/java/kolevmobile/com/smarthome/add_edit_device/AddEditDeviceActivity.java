@@ -32,7 +32,7 @@ public class AddEditDeviceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit);
 
-        ((App)getApplication()).getPresenterComponent().inject(this);
+        ((App) getApplication()).getPresenterComponent().inject(this);
 
         prepareToolbar();
 
@@ -84,7 +84,7 @@ public class AddEditDeviceActivity extends AppCompatActivity {
 
 
     public void saveDevice(View v) {
-        presenter.createDevice(deviceGeneralFragment);
+            presenter.saveDevice(deviceGeneralFragment);
 
         if (pagerAdapter.getCount() == 1) {
             TabLayout tabLayout = findViewById(R.id.tab_layout);

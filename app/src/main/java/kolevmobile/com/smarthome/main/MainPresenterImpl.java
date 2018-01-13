@@ -3,6 +3,10 @@ package kolevmobile.com.smarthome.main;
 import android.os.Handler;
 import android.os.Message;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,8 +14,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import kolevmobile.com.smarthome.connection.Communicator;
-import kolevmobile.com.smarthome.connection.model.SensorModel;
+import kolevmobile.com.smarthome.connection.DeviceResponceParser;
 import kolevmobile.com.smarthome.di.CommunicatorComponent;
+import kolevmobile.com.smarthome.di.CommunicatorModule;
 import kolevmobile.com.smarthome.di.DaggerCommunicatorComponent;
 import kolevmobile.com.smarthome.model.DaoSession;
 import kolevmobile.com.smarthome.model.Device;
@@ -21,18 +26,14 @@ import kolevmobile.com.smarthome.model.RelayModel;
 import kolevmobile.com.smarthome.model.RelayModelDao;
 import kolevmobile.com.smarthome.model.RelayStatus;
 import kolevmobile.com.smarthome.model.RelayStatusDao;
+import kolevmobile.com.smarthome.model.SensorModel;
 import kolevmobile.com.smarthome.model.SensorModelDao;
 import kolevmobile.com.smarthome.model.SensorValue;
 import kolevmobile.com.smarthome.model.SensorValueDao;
 
-/**
- * Created by me on 30/11/2017.
- */
-
 public class MainPresenterImpl implements MainPresenter {
 
-    private static List<Device> activeDevices;
-
+    private List<Device> activeDevices;
     private DeviceDao deviceDao;
     private SensorModelDao sensorModelDao;
     private SensorValueDao sensorValueDao;
@@ -40,6 +41,7 @@ public class MainPresenterImpl implements MainPresenter {
     private RelayStatusDao relayStatusDao;
 
     private Handler mainHandler;
+    private DeviceResponceParser parser;
 
     @Inject
     Communicator communicator;
@@ -50,17 +52,16 @@ public class MainPresenterImpl implements MainPresenter {
         this.sensorValueDao = daoSession.getSensorValueDao();
         this.relayModelDao = daoSession.getRelayModelDao();
         this.relayStatusDao = daoSession.getRelayStatusDao();
+        this.parser = new DeviceResponceParserImpl();
     }
 
 
     @Override
     public void onCreate() {
-//        deviceDao = daoSession.getDeviceDao();
-
-        CommunicatorComponent component = DaggerCommunicatorComponent.builder().build();
+        CommunicatorComponent component = DaggerCommunicatorComponent
+                .builder()
+                .communicatorModule(new CommunicatorModule(this)).build();
         component.inject(this);
-        communicator.setPresenter(this);
-
         activeDevices = new ArrayList<>();
 
         new Thread() {
@@ -70,7 +71,7 @@ public class MainPresenterImpl implements MainPresenter {
 
                 Message message = new Message();
                 message.obj = activeDevices;
-                message.what = MainActivity.DO_INIT_DEVICES;
+                message.what = MainActivity.MainHandler.DO_INIT_DEVICES;
                 mainHandler.sendMessage(message);
             }
         }.start();
@@ -99,9 +100,8 @@ public class MainPresenterImpl implements MainPresenter {
             public void run() {
                 activeDevices.clear();
                 activeDevices.addAll(deviceDao.loadAll());
-//                mainDisplayAdapter.notifyDataSetChanged();
                 Message message = new Message();
-                message.what = MainActivity.DO_UPDATE_ALL_VIEWS;
+                message.what = MainActivity.MainHandler.DO_UPDATE_ALL_VIEWS;
                 mainHandler.sendMessage(message);
             }
         }.start();
@@ -113,7 +113,7 @@ public class MainPresenterImpl implements MainPresenter {
         device.setRefreshing(true);
         Message message = new Message();
         message.obj = device;
-        message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
+        message.what = MainActivity.MainHandler.DO_UPDATE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
         communicator.getDeviceStatus(device);
     }
@@ -121,10 +121,9 @@ public class MainPresenterImpl implements MainPresenter {
     @Override
     public void removeDevice(int position) {
         Device removedDevice = activeDevices.remove(position);
-//        mainDisplayAdapter.notifyItemRemoved(position);
         Message message = new Message();
         message.obj = position;
-        message.what = MainActivity.DO_REMOVE_DEVICE_VIEW;
+        message.what = MainActivity.MainHandler.DO_REMOVE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
         deviceDao.delete(removedDevice);
     }
@@ -133,10 +132,9 @@ public class MainPresenterImpl implements MainPresenter {
     public void switchDeviceRelay(int position, int subPosition, boolean isChecked) {
         Device updatingDevice = activeDevices.get(position);
         updatingDevice.setRefreshing(true);
-//        mainDisplayAdapter.notifyItemChanged(updatingDevice);
         Message message = new Message();
         message.obj = updatingDevice;
-        message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
+        message.what = MainActivity.MainHandler.DO_UPDATE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
         RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
         int newStatus = isChecked ? 1 : 0;
@@ -145,62 +143,14 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
 
-//    @Override
-//    public Device getDeviceAt(int pos) {
-//        return activeDevices.get(pos);
-//    }
+    public void updateDevice(Device device, String responce) {
+        parser.updateDevice(device, responce);
 
-
-    public void updateDevice(Device device, kolevmobile.com.smarthome.connection.model.Device connectorDevice) {
-        String error = connectorDevice.getError();
-
-        if (error != null && error.length() != 0) {
-            device.setError(Error.fromString(error));
-        } else {
-            List<SensorModel> sensorData = connectorDevice.getSensorData();
-            for (SensorModel model : sensorData) {
-                for (kolevmobile.com.smarthome.model.SensorModel dbModel : device.getSensorModelList()) {
-                    if (model.getKey().equals(dbModel.getKey())) {
-                        SensorValue sensorValue = new SensorValue();
-                        sensorValue.setMeasuredAt(new Date());
-                        sensorValue.setValue(model.getValue());
-                        sensorValue.setSensorModelId(dbModel.getId());
-                        sensorValueDao.insert(sensorValue);
-                        device.setActualizationDate(new Date());
-                        dbModel.setActualValue(sensorValue);
-                        dbModel.setActualValueId(sensorValue.getId());
-                        dbModel.getSensroValueList().add(sensorValue);
-                        sensorModelDao.update(dbModel);
-                        break;
-                    }
-                }
-            }
-
-            List<kolevmobile.com.smarthome.connection.model.RelayModel> relayStatusData = connectorDevice.getRelayData();
-            for (kolevmobile.com.smarthome.connection.model.RelayModel model : relayStatusData) {
-                for (kolevmobile.com.smarthome.model.RelayModel dbModel : device.getRelayModelList()) {
-                    if (model.getKey().equals(dbModel.getKey())) {
-                        RelayStatus relayStatus = new RelayStatus();
-                        relayStatus.setSentAt(new Date());
-                        relayStatus.setValue(model.getValue());
-                        relayStatus.setRelayModelId(dbModel.getId());
-                        relayStatusDao.insert(relayStatus);
-                        device.setActualizationDate(new Date());
-                        dbModel.setActualStatus(relayStatus);
-                        dbModel.setActualStatusId(relayStatus.getId());
-                        dbModel.getRelayStatusListlList().add(relayStatus);
-                        relayModelDao.update(dbModel);
-                        break;
-                    }
-                }
-            }
-        }
         device.setRefreshing(false);
         Message message = new Message();
         message.obj = device;
-        message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
+        message.what = MainActivity.MainHandler.DO_UPDATE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
-        deviceDao.update(device);
     }
 
     public List<Device> getActiveDevices() {
@@ -211,12 +161,52 @@ public class MainPresenterImpl implements MainPresenter {
         device.setError(Error.COMUNICATING_ERROR);
         Message message = new Message();
         message.obj = device;
-        message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
+        message.what = MainActivity.MainHandler.DO_UPDATE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
 
     }
 
     public void setMainHandler(Handler mainHandler) {
         this.mainHandler = mainHandler;
+    }
+
+
+    class DeviceResponceParserImpl implements DeviceResponceParser {
+
+        public void updateDevice(Device device, String responce) {
+            JsonElement jelement = new JsonParser().parse(responce);
+            JsonObject jobject = jelement.getAsJsonObject();
+            String errorString = jobject.get(ERROR_KEY).getAsString();
+            if (errorString != null && errorString.length() != 0) {
+                device.setError(Error.fromString(errorString));
+                return;
+            }
+            Date currentDate = new Date();
+            for (SensorModel sensorModel : device.getSensorModelList()) {
+                float result = jobject.get(sensorModel.getKey()).getAsFloat();
+                SensorValue sensorValue = new SensorValue();
+                sensorValue.setMeasuredAt(currentDate);
+                sensorValue.setValue(result);
+                sensorValue.setSensorModelId(sensorModel.getId());
+                sensorValueDao.insert(sensorValue);
+                sensorModel.setActualValue(sensorValue);
+                sensorModel.setActualValueId(sensorValue.getId());
+                sensorModel.getSensroValueList().add(sensorValue);
+                sensorModelDao.update(sensorModel);
+            }
+            for (RelayModel relayModel : device.getRelayModelList()) {
+                int result = jobject.get(relayModel.getKey()).getAsInt();
+                RelayStatus relayStatus = new RelayStatus();
+                relayStatus.setRelayModelId(relayModel.getId());
+                relayStatus.setValue(result);
+                relayStatus.setSentAt(currentDate);
+                relayStatusDao.insert(relayStatus);
+                relayModel.setActualStatus(relayStatus);
+                relayModel.setActualStatusId(relayStatus.getId());
+                relayModelDao.update(relayModel);
+            }
+            device.setActualizationDate(currentDate);
+            deviceDao.update(device);
+        }
     }
 }

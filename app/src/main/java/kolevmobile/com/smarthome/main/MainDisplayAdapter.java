@@ -1,8 +1,5 @@
 package kolevmobile.com.smarthome.main;
 
-/**
- * Created by x on 21.10.2017 г..
- */
 
 import android.content.Context;
 import android.graphics.Color;
@@ -16,9 +13,10 @@ import android.widget.TextView;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.ItemButtonObserver;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.custom_components.ExpandableLayout;
@@ -29,18 +27,13 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
     private List<Device> activeDevices;
     private Context context;
     private ItemButtonObserver onItemViewClickListener;
-    private HashSet<Integer> expandedPositionSet;
 
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm dd.MM");
 
-    void setOnItemViewClickListener(ItemButtonObserver onItemViewClickListener) {
-        this.onItemViewClickListener = onItemViewClickListener;
-    }
-
-    MainDisplayAdapter(Context context) {
+    MainDisplayAdapter(Context context, ItemButtonObserver onItemViewClickListene) {
         this.context = context;
-        expandedPositionSet = new HashSet<>();
+        this.onItemViewClickListener = onItemViewClickListene;
     }
 
     public void setActiveDevices(List<Device> activeDevices) {
@@ -49,16 +42,26 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
 
 
     class DeviceViewHolder extends RecyclerView.ViewHolder {
-        private TextView deviceNameTextView;
-        private TextView deviceInfoTextView;
-        private View refreshButton;
-        private View detailsButton;
-        private View editButton;
-        private View deleteButton;
-        private ExpandableLayout expandableLayout;
-        private AVLoadingIndicatorView avi;
-        private RecyclerView sensorsListView;
-        private RecyclerView relaysListView;
+        @BindView(R.id.deviceNameTextView)
+        TextView deviceNameTextView;
+        @BindView(R.id.deviceInfoTextView)
+        TextView deviceInfoTextView;
+        @BindView(R.id.refreshButton)
+        View refreshButton;
+        @BindView(R.id.detailsButton)
+        View detailsButton;
+        @BindView(R.id.editButton)
+        View editButton;
+        @BindView(R.id.deleteButton)
+        View deleteButton;
+        @BindView(R.id.expandable_layout)
+        ExpandableLayout expandableLayout;
+        @BindView(R.id.avi)
+        AVLoadingIndicatorView avi;
+        @BindView(R.id.sensors_list_view)
+        RecyclerView sensorsListView;
+        @BindView(R.id.relays_list_view)
+        RecyclerView relaysListView;
 
         private SensorDisplayAdapter sensorDisplayAdapter;
         private RelayDisplayAdapter relayDisplayAdapter;
@@ -74,39 +77,28 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
         private DeviceViewHolder(View itemView) {
             super(itemView);
 
-            expandableLayout = itemView.findViewById(R.id.expandable_layout);
+            ButterKnife.bind(this, itemView);
 
-            this.deviceNameTextView = itemView.findViewById(R.id.deviceNameTextView);
-            this.deviceInfoTextView = itemView.findViewById(R.id.deviceInfoTextView);
-            this.refreshButton = itemView.findViewById(R.id.refreshButton);
             refreshButton.setOnClickListener(view -> {
                 onItemViewClickListener.onClick(refreshButton, getPosition(), 0);
             });
-            this.detailsButton = itemView.findViewById(R.id.detailsButton);
             detailsButton.setOnClickListener(view -> onItemViewClickListener.onClick(detailsButton, getPosition(), 0));
-            this.editButton = itemView.findViewById(R.id.editButton);
             editButton.setOnClickListener(view -> onItemViewClickListener.onClick(editButton, getPosition(), 0));
-            this.deleteButton = itemView.findViewById(R.id.deleteButton);
             deleteButton.setOnClickListener(view -> onItemViewClickListener.onClick(deleteButton, getPosition(), 0));
-            avi = itemView.findViewById(R.id.avi);
 
-            sensorsListView = itemView.findViewById(R.id.sensors_list_view);
-            relaysListView = itemView.findViewById(R.id.relays_list_view);
             RecyclerView.LayoutManager recyclerViewLayoutManagerSensor = new LinearLayoutManager(context);
             RecyclerView.LayoutManager recyclerViewLayoutManagerRelay = new LinearLayoutManager(context);
             sensorsListView.setLayoutManager(recyclerViewLayoutManagerSensor);
             relaysListView.setLayoutManager(recyclerViewLayoutManagerRelay);
             sensorDisplayAdapter = new SensorDisplayAdapter(context);
-            relayDisplayAdapter = new RelayDisplayAdapter(context);
+            relayDisplayAdapter = new RelayDisplayAdapter(context, onItemViewClickListener);
             LinearLayoutManager HorizontalLayoutSensor = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             LinearLayoutManager HorizontalLayoutRelay = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             sensorsListView.setLayoutManager(HorizontalLayoutSensor);
             relaysListView.setLayoutManager(HorizontalLayoutRelay);
-
             sensorsListView.setAdapter(sensorDisplayAdapter);
             relaysListView.setAdapter(relayDisplayAdapter);
-
-            relayDisplayAdapter.setOnItemViewClickListener(onItemViewClickListener);
+//            relayDisplayAdapter.setOnItemViewClickListener(onItemViewClickListener);
         }
 
     }

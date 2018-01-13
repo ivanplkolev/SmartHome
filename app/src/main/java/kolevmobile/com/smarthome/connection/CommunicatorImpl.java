@@ -1,7 +1,5 @@
 package kolevmobile.com.smarthome.connection;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 
 import kolevmobile.com.smarthome.main.MainPresenter;
@@ -21,6 +19,10 @@ import okhttp3.Response;
  */
 
 public class CommunicatorImpl implements Communicator {
+
+    public CommunicatorImpl(MainPresenter presenter){
+        this.presenter = presenter;
+    }
 
     private static OkHttpClient client = new OkHttpClient();
 
@@ -42,8 +44,7 @@ public class CommunicatorImpl implements Communicator {
                 e.printStackTrace();
 
 
-
-                presenter.updateDevice(device,Error.COMUNICATING_ERROR );
+                presenter.updateDevice(device, Error.COMUNICATING_ERROR);
 
             }
 
@@ -75,7 +76,7 @@ public class CommunicatorImpl implements Communicator {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
 
-                presenter.updateDevice(device,Error.COMUNICATING_ERROR );
+                presenter.updateDevice(device, Error.COMUNICATING_ERROR);
 
             }
 
@@ -89,69 +90,16 @@ public class CommunicatorImpl implements Communicator {
     }
 
     private void handleDeviceResponce(Response response, Device device) throws IOException {
-        kolevmobile.com.smarthome.connection.model.Device connectorDevice = null;
-        if (!response.isSuccessful()) {
-            presenter.updateDevice(device, Error.COMUNICATING_ERROR);
-        } else {
-            try {
-                String res = response.body().string();
-                connectorDevice = new Gson().fromJson(res, kolevmobile.com.smarthome.connection.model.Device.class);
-            } catch (Exception e) {
+        try {
+            if (!response.isSuccessful()) {
                 presenter.updateDevice(device, Error.COMUNICATING_ERROR);
+                return;
             }
+            String res = response.body().string();
+            presenter.updateDevice(device, res);
+        } catch (Exception e) {
+            presenter.updateDevice(device, Error.COMUNICATING_ERROR);
         }
-            if(connectorDevice != null) {
-                presenter.updateDevice(device, connectorDevice);
-            }
-//            JsonElement jelement = new JsonParser().parse(res);
-//            JsonObject jobject = jelement.getAsJsonObject();
-//            String error = jobject.get("Error").getAsString();
-//            if (false&& error != null && error.length() != 0) {
-//                device.setError(Error.SCHEMA_ERROR);
-//            } else {
-//                for (SensorModel sensorModel : device.getSensorModelList()) {
-//                    float result = jobject.get(sensorModel.getKey()).getAsFloat();
-//                    SensorValue sensorValue = new SensorValue();
-//                    sensorValue.setMeasuredAt(new Date());
-//                    sensorValue.setValue(result);
-//                    sensorValue.setSensorModelId(sensorModel.getId());
-//                    sensorValueDao.insert(sensorValue);
-//
-//                    device.setActualizationDate(new Date());
-//                    sensorModel.setActualValue(sensorValue);
-//                    sensorModel.setActualValueId(sensorValue.getId());
-//                    sensorModel.getSensroValueList().add(sensorValue);
-//
-//                    sensorModelDao.update(sensorModel);
-//
-//                }
-//
-//                for (RelayModel relayModel :  device.getRelayModelList()) {
-//                    int result = jobject.get(relayModel.getKey()).getAsInt();
-//                    RelayStatus relayStatus = new RelayStatus();
-//                    relayStatus.setRelayModelId(relayModel.getId());
-//                    relayStatus.setValue(result);
-//                    relayStatus.setSentAt(new Date());
-//                    relayStatusDao.insert(relayStatus);
-//
-//
-//                    relayModel.setActualStatus(relayStatus);
-//                    relayModel.setActualStatusId(relayStatus.getId());
-//                    relayModelDao.update(relayModel);
-//                    device.setActualizationDate(new Date());
-//                }
-//            }
-//        }
-//        device.setRefreshing(false);
-//        Message message = new Message();
-//        message.obj=device;
-//        message.what = MainActivity.DO_UPDATE_DEVICE_VIEW;
-//        activity.getMainHandler().sendMessage(message);
-//        deviceDao.update(device);
-        }
-
-
-    public void setPresenter(MainPresenter presenter) {
-        this.presenter = presenter;
     }
+
 }

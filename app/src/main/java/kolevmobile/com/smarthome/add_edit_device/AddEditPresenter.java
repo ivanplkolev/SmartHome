@@ -21,5 +21,5 @@ public interface AddEditPresenter {
 
     void saveDeviceRelayModel(int pos, String relayModelName, String relayModeldesc, String key);
 
-    void createDevice(DeviceGeneralFragment fragment);
+    void saveDevice(DeviceGeneralFragment fragment);
 }

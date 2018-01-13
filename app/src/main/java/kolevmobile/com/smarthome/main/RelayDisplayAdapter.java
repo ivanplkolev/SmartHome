@@ -1,12 +1,7 @@
 package kolevmobile.com.smarthome.main;
 
-/**
- * Created by me on 05/11/2017.
- */
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +11,8 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.ItemButtonObserver;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.Device;
@@ -31,37 +28,29 @@ public class RelayDisplayAdapter extends RecyclerView.Adapter<RelayDisplayAdapte
 
     private ItemButtonObserver onItemViewClickListener;
 
-
-    void setOnItemViewClickListener(ItemButtonObserver onItemViewClickListener) {
-        this.onItemViewClickListener = onItemViewClickListener;
-    }
-
     public void setDevice(Device device) {
         this.device = device;
     }
 
     class MyView extends RecyclerView.ViewHolder {
-        private TextView relayTogglerInfo;
-        private TextView relayName;
-        private ToggleButton relayTogglerButton;
+        @BindView(R.id.relay_toggler_info)
+        TextView relayTogglerInfo;
+        @BindView(R.id.relay_toggler_name)
+        TextView relayName;
+        @BindView(R.id.relay_toggler)
+        ToggleButton relayTogglerButton;
 
         MyView(View view) {
             super(view);
-            relayTogglerButton = view.findViewById(R.id.relay_toggler);
-            relayTogglerInfo = view.findViewById(R.id.relay_toggler_info);
-            relayName = view.findViewById(R.id.relay_toggler_name);
-            relayTogglerButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onItemViewClickListener.onClick(relayTogglerButton, position, getPosition());
-                }
-            });
+            ButterKnife.bind(this, view);
+            relayTogglerButton.setOnClickListener(view1 -> onItemViewClickListener.onClick(relayTogglerButton, position, getPosition()));
         }
     }
 
-    RelayDisplayAdapter(Context context) {
+    RelayDisplayAdapter(Context context, ItemButtonObserver onItemViewClickListener) {
         this.relayModelList = new ArrayList<>();
         this.context = context;
+        this.onItemViewClickListener = onItemViewClickListener;
     }
 
     void setPosition(int position) {

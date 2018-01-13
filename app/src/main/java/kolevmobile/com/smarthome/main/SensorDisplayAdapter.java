@@ -14,12 +14,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.SensorModel;
 
-/**
- * Created by Juned on 3/27/2017.
- */
 
 public class SensorDisplayAdapter extends RecyclerView.Adapter<SensorDisplayAdapter.MyView> {
 
@@ -27,17 +26,16 @@ public class SensorDisplayAdapter extends RecyclerView.Adapter<SensorDisplayAdap
     private Context context;
 
     class MyView extends RecyclerView.ViewHolder {
-
+        @BindView(R.id.sensor_name)
         TextView sensorNameTextView;
+        @BindView(R.id.sensor_value)
         TextView sensorValueTextView;
+        @BindView(R.id.sensor_units)
         TextView sensorUnitsTextView;
 
         MyView(View view) {
             super(view);
-
-            sensorNameTextView = view.findViewById(R.id.sensor_name);
-            sensorValueTextView = view.findViewById(R.id.sensor_value);
-            sensorUnitsTextView = view.findViewById(R.id.sensor_units);
+            ButterKnife.bind(this, view);
         }
     }
 

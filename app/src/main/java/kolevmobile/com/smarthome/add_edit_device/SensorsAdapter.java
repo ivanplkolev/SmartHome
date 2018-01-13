@@ -12,12 +12,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kolevmobile.com.smarthome.ItemButtonObserver;
 import kolevmobile.com.smarthome.R;
+import kolevmobile.com.smarthome.custom_components.ExpandableLayout;
 import kolevmobile.com.smarthome.model.SensorModel;
 
 public class SensorsAdapter extends RecyclerView.Adapter<SensorsAdapter.MyViewHolder> {
 
     private List<SensorModel> sensorModelList;
-
     private ItemButtonObserver onItemViewClickListener;
 
     public void setOnItemViewClickListener(ItemButtonObserver onItemViewClickListener) {
@@ -33,24 +33,17 @@ public class SensorsAdapter extends RecyclerView.Adapter<SensorsAdapter.MyViewHo
         TextView keyTextField;
         @BindView(R.id.sensor_units_text_view)
         TextView unitsTextField;
+        @BindView(R.id.expandable_layout)
+        ExpandableLayout expandableLayout;
+        @BindView(R.id.editButton)
         View editButton;
+        @BindView(R.id.deleteButton)
         View deleteButton;
-        View buttonsLayout;
 
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-
-            View sensorRowBaseLayout = itemView.findViewById(R.id.sensor_row_base_layout);
-            buttonsLayout = itemView.findViewById(R.id.sensor_row_buttons_layout);
-            sensorRowBaseLayout.setOnTouchListener((var1, var2) -> {
-                boolean vissible = buttonsLayout.getVisibility() == View.VISIBLE;
-                buttonsLayout.setVisibility(vissible ? View.INVISIBLE : View.VISIBLE);
-                return false;
-            });
-            editButton = itemView.findViewById(R.id.editButton);
             editButton.setOnClickListener(view12 -> onItemViewClickListener.onClick(editButton, getPosition(), 0));
-            deleteButton = itemView.findViewById(R.id.deleteButton);
             deleteButton.setOnClickListener(view1 -> onItemViewClickListener.onClick(deleteButton, getPosition(), 0));
         }
     }
@@ -68,6 +61,9 @@ public class SensorsAdapter extends RecyclerView.Adapter<SensorsAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        if (holder.expandableLayout.isExpanded()) {
+            holder.expandableLayout.close();
+        }
         SensorModel sensorModel = sensorModelList.get(position);
         holder.nameTextField.setText(sensorModel.getName());
         holder.descriptionTextField.setText(sensorModel.getDescription());

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary" />
@@ -31,10 +31,10 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="#b19e9e"
+                android:background="@color/colormainbackg"
                 android:elevation="24sp"
                 android:orientation="vertical"
                 android:padding="5dp">
@@ -43,22 +43,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/app_name"
-                    android:textColor="#ffffff"
-                    android:textSize="35sp"
+                    android:text="@string/app_title"
+                    android:background="@color/colormainiconbkg"
+                    android:textColor="#f72424"
+                    android:textSize="25sp"
                     android:textStyle="bold" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#ffffff" />
+                    android:background="@color/colorblack" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="#ffffff"
-                    android:textSize="25sp"
+                    android:text="@string/string_about_title"
+                    android:textSize="20sp"
                     android:textStyle="italic" />
             </LinearLayout>
 
@@ -66,12 +67,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="#ffffff"
+                android:background="@color/colormainiconbkg"
                 android:elevation="24sp"
                 android:gravity="center_horizontal"
                 android:padding="5dp"
                 android:text="@string/string_about_content"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -79,15 +80,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="@string/string_about_contacts"
-                android:textSize="30sp" />
+                android:textSize="25sp" />
 
             <LinearLayout
+                android:id="@+id/llinkedIn_button"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="#ffaaff"
+                android:background="@color/colormainiconbkg"
                 android:elevation="25sp"
-                android:onClick="openWeb"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -105,17 +107,17 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="@string/string_about_linkedin"
-                    android:textColor="#ffffff"
-                    android:textSize="25sp" />
+                    android:textColor="@color/colorabouttitle"
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/mail_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="#ffffff"
+                android:background="@color/colormainiconbkg"
                 android:elevation="24sp"
-                android:onClick="sendMail"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -133,8 +135,8 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="@string/string_about_email"
-                    android:textColor="#ffffff"
-                    android:textSize="25sp" />
+                    android:textColor="@color/colorabouttitle"
+                    android:textSize="20sp" />
             </LinearLayout>
 
 
@@ -143,7 +145,7 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom|center_horizontal"
                 android:text="@string/string_about_bottom_logo"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
 
         </LinearLayout>
     </FrameLayout>

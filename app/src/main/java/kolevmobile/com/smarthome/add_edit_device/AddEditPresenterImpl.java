@@ -8,10 +8,6 @@ import kolevmobile.com.smarthome.model.RelayModelDao;
 import kolevmobile.com.smarthome.model.SensorModel;
 import kolevmobile.com.smarthome.model.SensorModelDao;
 
-/**
- * Created by me on 03/12/2017.
- */
-
 public class AddEditPresenterImpl implements AddEditPresenter {
 
     private Device device;
@@ -36,13 +32,16 @@ public class AddEditPresenterImpl implements AddEditPresenter {
         return device;
     }
 
-    public void createDevice(DeviceGeneralFragment fragment) {
-        if (device != null) {
-            throw new IllegalStateException();
+    public void saveDevice(DeviceGeneralFragment fragment) {
+        if (device == null) {
+            device = new Device();
+            fragment.copyfromFields(device);
+            deviceDao.insert(device);
+        } else {
+            fragment.copyfromFields(device);
+            deviceDao.update(device);
         }
-        device = new Device();
-        fragment.copyfromFields(device);
-        deviceDao.insert(device);
+
     }
 
     public void addEditSensorModel(int pos, String name, String desc, String key, String units) {

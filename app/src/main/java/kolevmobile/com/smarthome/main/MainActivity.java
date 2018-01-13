@@ -35,13 +35,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
     MainPresenter presenter;
 
     private MainDisplayAdapter mainDisplayAdapter;
-//    private Handler mainHandler;
-
-
-    public final static int DO_UPDATE_ALL_VIEWS = 0;
-    public final static int DO_UPDATE_DEVICE_VIEW = 1;
-    public final static int DO_REMOVE_DEVICE_VIEW = 2;
-    public final static int DO_INIT_DEVICES = 3;
 
     @BindView(R.id.main_navigation_view)
     NavigationView mainNavigationView;
@@ -62,14 +55,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
         mainToolbar.setTitle("Main activity");
 
-
-
-
         RecyclerView.LayoutManager mainLayoutManager = new LinearLayoutManager(this);
         mainRecyclerView.setLayoutManager(mainLayoutManager);
         mainRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mainDisplayAdapter = new MainDisplayAdapter(this);
-        mainDisplayAdapter.setOnItemViewClickListener((view, position, subPosition) -> {
+        mainDisplayAdapter = new MainDisplayAdapter(this, (view, position, subPosition) -> {
             switch (view.getId()) {
                 case R.id.refreshButton:
                     presenter.refreshDevice(position);
@@ -89,11 +78,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
             }
         });
         mainRecyclerView.setAdapter(mainDisplayAdapter);
-
-
         setUpNavigationView();
 
-//        presenter = new MainPresenterImpl(this, mainHandler);
         presenter.onCreate();
     }
 
@@ -132,13 +118,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
         presenter.onResume();
     }
 
+    // Navigation methods
     public void gotoAboutPage() {
         startActivity(new Intent(this, AboutActivity.class));
     }
 
     public void addDevice() {
         startActivity(new Intent(this, AddEditDeviceActivity.class));
-
     }
 
     public void editDevice(int position) {
@@ -154,27 +140,30 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
 
+    class MainHandler extends Handler {
 
-    class MainHandler extends Handler{
+        final static int DO_UPDATE_ALL_VIEWS = 0;
+        final static int DO_UPDATE_DEVICE_VIEW = 1;
+        final static int DO_REMOVE_DEVICE_VIEW = 2;
+        final static int DO_INIT_DEVICES = 3;
 
-            public void handleMessage(Message msg) {
-                final int what = msg.what;
-                switch (what) {
-                    case DO_UPDATE_ALL_VIEWS:
-                        mainDisplayAdapter.notifyDataSetChanged();
-                        break;
-                    case DO_UPDATE_DEVICE_VIEW:
-                        mainDisplayAdapter.notifyItemChanged(msg.obj);
-                        break;
-                    case DO_REMOVE_DEVICE_VIEW:
-                        mainDisplayAdapter.notifyItemRemoved((Integer) msg.obj);
-                        break;
-                    case DO_INIT_DEVICES:
-                        mainDisplayAdapter.setActiveDevices((List<Device>) msg.obj);
-                        mainDisplayAdapter.notifyDataSetChanged();
-                        break;
-                }
+        public void handleMessage(Message msg) {
+            final int what = msg.what;
+            switch (what) {
+                case DO_UPDATE_ALL_VIEWS:
+                    mainDisplayAdapter.notifyDataSetChanged();
+                    break;
+                case DO_UPDATE_DEVICE_VIEW:
+                    mainDisplayAdapter.notifyItemChanged(msg.obj);
+                    break;
+                case DO_REMOVE_DEVICE_VIEW:
+                    mainDisplayAdapter.notifyItemRemoved((Integer) msg.obj);
+                    break;
+                case DO_INIT_DEVICES:
+                    mainDisplayAdapter.setActiveDevices((List<Device>) msg.obj);
+                    mainDisplayAdapter.notifyDataSetChanged();
+                    break;
             }
-
+        }
     }
 }

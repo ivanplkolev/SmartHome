@@ -34,7 +34,7 @@ public interface MainPresenter {
 //    Device getDeviceAt(int pos);
 
     public List<Device> getActiveDevices();
-    void updateDevice(Device device, kolevmobile.com.smarthome.connection.model.Device connectorDevice);
+    void updateDevice(Device device, String responceString);
 
     void updateDevice(Device device, Error error);
 
