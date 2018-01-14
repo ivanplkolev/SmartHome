@@ -98,14 +98,13 @@ public class MainDisplayAdapter extends RecyclerView.Adapter<MainDisplayAdapter.
             relaysListView.setLayoutManager(HorizontalLayoutRelay);
             sensorsListView.setAdapter(sensorDisplayAdapter);
             relaysListView.setAdapter(relayDisplayAdapter);
-//            relayDisplayAdapter.setOnItemViewClickListener(onItemViewClickListener);
         }
 
     }
 
     @Override
     public DeviceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.display_adapter_element, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.device_row_view, parent, false);
 
         return new DeviceViewHolder(view);
     }

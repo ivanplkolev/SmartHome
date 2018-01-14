@@ -1,178 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--android:layout_margin="10sp"--><!--style="@style/settings_list">-->
+
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="5sp"
+    card_view:cardBackgroundColor="#FF9800"
+    card_view:cardCornerRadius="7sp"
+    card_view:cardElevation="7sp"
+    card_view:contentPadding="7sp"
+
+    >
 
     <kolevmobile.com.smarthome.custom_components.ExpandableLayout
         android:id="@+id/expandable_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        style="@style/expandableLayout"
         app:expDuration="500"
         app:expWithParentScroll="true">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            style="@style/settings_list">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <LinearLayout style="@style/textRow">
 
                 <TextView
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="@string/sensor_row_name"
-                    android:textStyle="italic" />
+                    style="@style/textTitle"
+                    android:text="@string/sensor_row_name" />
 
                 <TextView
                     android:id="@+id/sensor_name_text_view"
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textStyle="bold" />
-
+                    style="@style/textContent" />
             </LinearLayout>
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <LinearLayout style="@style/textRow">
 
                 <TextView
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="@string/sensor_row_description"
-                    android:textStyle="italic" />
+                    style="@style/textTitle"
+                    android:text="@string/sensor_row_description" />
 
                 <TextView
                     android:id="@+id/sensor_description_text_view"
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textStyle="bold" />
-
+                    style="@style/textContent" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <LinearLayout style="@style/textRow">
 
                 <TextView
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="@string/sensor_row_key"
-                    android:textStyle="italic" />
+                    style="@style/textTitle"
+                    android:text="@string/sensor_row_key" />
 
                 <TextView
                     android:id="@+id/sensor_key_text_view"
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textStyle="bold" />
-
+                    style="@style/textContent" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <LinearLayout style="@style/textRow">
 
                 <TextView
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="@string/sensor_row_units"
-                    android:textStyle="italic" />
+                    style="@style/textTitle"
+                    android:text="@string/sensor_row_units" />
 
                 <TextView
                     android:id="@+id/sensor_units_text_view"
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5sp"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textStyle="bold" />
-
+                    style="@style/textContent" />
             </LinearLayout>
 
-
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/device_settings_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="#ffffff"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/refreshButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_refresh_black_24dp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/detailsButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:src="@drawable/ic_show_chart_black_24dp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/editButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_edit_black_24dp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/deleteButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_delete_black_24dp"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
-
+        <include layout="@layout/subdevice_options" />
 
     </kolevmobile.com.smarthome.custom_components.ExpandableLayout>
 
-</LinearLayout>
+    <!--</LinearLayout>-->
+
+</android.support.v7.widget.CardView>

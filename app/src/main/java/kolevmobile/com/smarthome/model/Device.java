@@ -11,9 +11,6 @@ import org.greenrobot.greendao.annotation.Transient;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by me on 02/11/2017.
- */
 
 @Entity
 public class Device {

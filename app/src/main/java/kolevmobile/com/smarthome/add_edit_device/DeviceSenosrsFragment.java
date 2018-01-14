@@ -1,8 +1,5 @@
 package kolevmobile.com.smarthome.add_edit_device;
 
-/**
- * Created by me on 04/11/2017.
- */
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -92,9 +89,9 @@ public class DeviceSenosrsFragment extends Fragment {
                 .setPositiveButton("OK",
                         (dialog, id) -> {
                             String name = sensorNameInput.getText().toString();
-                            String description = sensorNameInput.getText().toString();
-                            String key = sensorNameInput.getText().toString();
-                            String units = sensorNameInput.getText().toString();
+                            String description = sensorDescriptionInput.getText().toString();
+                            String key = sensorKeyInput.getText().toString();
+                            String units = sensorUnitsInput.getText().toString();
                             presenter.addEditSensorModel(pos, name, description, key, units);
                             if (pos == -1) {
                                 mAdapter.notifyItemRangeChanged(presenter.getDevice().getSensorModelList().size() - 1, 1);

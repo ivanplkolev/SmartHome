@@ -16,9 +16,6 @@ import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.DeviceDao;
 
 
-/**
- * Created by x on 23.10.2017 г..
- */
 
 public class DetailsActivity extends AppCompatActivity {
 

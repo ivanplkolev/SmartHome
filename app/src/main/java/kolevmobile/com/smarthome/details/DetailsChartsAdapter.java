@@ -16,9 +16,6 @@ import java.util.List;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.SensorModel;
 
-/**
- * Created by Juned on 3/27/2017.
- */
 
 public class DetailsChartsAdapter extends RecyclerView.Adapter<DetailsChartsAdapter.MyView> {
 

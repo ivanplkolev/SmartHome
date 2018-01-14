@@ -84,7 +84,7 @@ public class AddEditDeviceActivity extends AppCompatActivity {
 
 
     public void saveDevice(View v) {
-            presenter.saveDevice(deviceGeneralFragment);
+        presenter.saveDevice(deviceGeneralFragment);
 
         if (pagerAdapter.getCount() == 1) {
             TabLayout tabLayout = findViewById(R.id.tab_layout);

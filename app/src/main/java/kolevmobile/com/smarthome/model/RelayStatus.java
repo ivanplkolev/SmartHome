@@ -6,9 +6,6 @@ import org.greenrobot.greendao.annotation.Id;
 
 import java.util.Date;
 
-/**
- * Created by me on 02/11/2017.
- */
 @Entity
 public class RelayStatus {
     @Id

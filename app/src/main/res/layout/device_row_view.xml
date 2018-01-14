@@ -5,12 +5,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-
     <kolevmobile.com.smarthome.custom_components.ExpandableLayout
         android:id="@+id/expandable_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        style="@style/expandableLayout"
         app:expDuration="500"
         app:expWithParentScroll="true">
 
@@ -39,62 +36,13 @@
                 android:layout_gravity="center_vertical"
                 android:layout_margin="5sp"
                 android:layout_weight="1"
-                android:fontFamily="serif"
+                android:fontFamily="casual"
                 android:gravity="center"
                 android:textSize="20sp" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/device_settings_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="#ffffff"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/refreshButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_refresh_black_24dp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/detailsButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:src="@drawable/ic_show_chart_black_24dp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/editButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_edit_black_24dp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/deleteButton"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_gravity="center"
-                android:layout_margin="5sp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_delete_black_24dp"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
+        <include layout="@layout/device_options" />
 
 
     </kolevmobile.com.smarthome.custom_components.ExpandableLayout>

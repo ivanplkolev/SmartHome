@@ -13,10 +13,6 @@ import java.util.List;
 
 import kolevmobile.com.smarthome.model.SensorValue;
 
-/**
- * Created by x on 18.11.2017 г..
- */
-
 public class DetailsChartView extends View {
 
     private List<SensorValue> values;

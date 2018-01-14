@@ -15,10 +15,6 @@ import kolevmobile.com.smarthome.App;
 import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.model.Device;
 
-/**
- * Created by me on 04/11/2017.
- */
-
 public class DeviceGeneralFragment extends Fragment {
 
     @Inject

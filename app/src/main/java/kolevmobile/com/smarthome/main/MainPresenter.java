@@ -7,9 +7,6 @@ import java.util.List;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.Error;
 
-/**
- * Created by me on 30/11/2017.
- */
 
 public interface MainPresenter {
 

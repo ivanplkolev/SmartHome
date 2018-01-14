@@ -10,9 +10,6 @@ import kolevmobile.com.smarthome.main.MainPresenter;
 import kolevmobile.com.smarthome.main.MainPresenterImpl;
 import kolevmobile.com.smarthome.model.DaoSession;
 
-/**
- * Created by x on 10.12.2017 г..
- */
 
 @Module
 public class PresenterModule {

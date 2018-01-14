@@ -2,10 +2,6 @@ package kolevmobile.com.smarthome.add_edit_device;
 
 import kolevmobile.com.smarthome.model.Device;
 
-/**
- * Created by me on 03/12/2017.
- */
-
 public interface AddEditPresenter {
 
 

@@ -1,8 +1,5 @@
 package kolevmobile.com.smarthome.main;
 
-/**
- * Created by me on 05/11/2017.
- */
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

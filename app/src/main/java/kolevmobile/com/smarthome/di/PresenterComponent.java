@@ -11,9 +11,6 @@ import kolevmobile.com.smarthome.add_edit_device.DeviceSenosrsFragment;
 import kolevmobile.com.smarthome.main.MainActivity;
 import kolevmobile.com.smarthome.main.MainPresenter;
 
-/**
- * Created by x on 10.12.2017 г..
- */
 
 @Singleton
 @Component(modules = {PresenterModule.class})

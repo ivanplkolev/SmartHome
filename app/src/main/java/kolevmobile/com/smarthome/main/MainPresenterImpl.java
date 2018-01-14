@@ -174,39 +174,43 @@ public class MainPresenterImpl implements MainPresenter {
     class DeviceResponceParserImpl implements DeviceResponceParser {
 
         public void updateDevice(Device device, String responce) {
-            JsonElement jelement = new JsonParser().parse(responce);
-            JsonObject jobject = jelement.getAsJsonObject();
-            String errorString = jobject.get(ERROR_KEY).getAsString();
-            if (errorString != null && errorString.length() != 0) {
-                device.setError(Error.fromString(errorString));
-                return;
+            try {
+                JsonElement jelement = new JsonParser().parse(responce);
+                JsonObject jobject = jelement.getAsJsonObject();
+                String errorString = jobject.get(ERROR_KEY).getAsString();
+                if (errorString != null && errorString.length() != 0) {
+                    device.setError(Error.fromString(errorString));
+                    return;
+                }
+                Date currentDate = new Date();
+                for (SensorModel sensorModel : device.getSensorModelList()) {
+                    float result = jobject.get(sensorModel.getKey()).getAsFloat();
+                    SensorValue sensorValue = new SensorValue();
+                    sensorValue.setMeasuredAt(currentDate);
+                    sensorValue.setValue(result);
+                    sensorValue.setSensorModelId(sensorModel.getId());
+                    sensorValueDao.insert(sensorValue);
+                    sensorModel.setActualValue(sensorValue);
+                    sensorModel.setActualValueId(sensorValue.getId());
+                    sensorModel.getSensroValueList().add(sensorValue);
+                    sensorModelDao.update(sensorModel);
+                }
+                for (RelayModel relayModel : device.getRelayModelList()) {
+                    int result = jobject.get(relayModel.getKey()).getAsInt();
+                    RelayStatus relayStatus = new RelayStatus();
+                    relayStatus.setRelayModelId(relayModel.getId());
+                    relayStatus.setValue(result);
+                    relayStatus.setSentAt(currentDate);
+                    relayStatusDao.insert(relayStatus);
+                    relayModel.setActualStatus(relayStatus);
+                    relayModel.setActualStatusId(relayStatus.getId());
+                    relayModelDao.update(relayModel);
+                }
+                device.setActualizationDate(currentDate);
+                deviceDao.update(device);
+            } catch (Exception e) {
+                    device.setError(Error.SCHEMA_ERROR);
             }
-            Date currentDate = new Date();
-            for (SensorModel sensorModel : device.getSensorModelList()) {
-                float result = jobject.get(sensorModel.getKey()).getAsFloat();
-                SensorValue sensorValue = new SensorValue();
-                sensorValue.setMeasuredAt(currentDate);
-                sensorValue.setValue(result);
-                sensorValue.setSensorModelId(sensorModel.getId());
-                sensorValueDao.insert(sensorValue);
-                sensorModel.setActualValue(sensorValue);
-                sensorModel.setActualValueId(sensorValue.getId());
-                sensorModel.getSensroValueList().add(sensorValue);
-                sensorModelDao.update(sensorModel);
-            }
-            for (RelayModel relayModel : device.getRelayModelList()) {
-                int result = jobject.get(relayModel.getKey()).getAsInt();
-                RelayStatus relayStatus = new RelayStatus();
-                relayStatus.setRelayModelId(relayModel.getId());
-                relayStatus.setValue(result);
-                relayStatus.setSentAt(currentDate);
-                relayStatusDao.insert(relayStatus);
-                relayModel.setActualStatus(relayStatus);
-                relayModel.setActualStatusId(relayStatus.getId());
-                relayModelDao.update(relayModel);
-            }
-            device.setActualizationDate(currentDate);
-            deviceDao.update(device);
         }
     }
 }

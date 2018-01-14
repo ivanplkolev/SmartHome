@@ -14,19 +14,16 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-/**
- * Created by me on 10/11/2017.
- */
 
 public class CommunicatorImpl implements Communicator {
-
-    public CommunicatorImpl(MainPresenter presenter){
-        this.presenter = presenter;
-    }
 
     private static OkHttpClient client = new OkHttpClient();
 
     private MainPresenter presenter;
+
+    public CommunicatorImpl(MainPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     public void getDeviceStatus(Device device) {
         HttpUrl url = new HttpUrl.Builder()
@@ -41,11 +38,7 @@ public class CommunicatorImpl implements Communicator {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-
-
-                presenter.updateDevice(device, Error.COMUNICATING_ERROR);
-
+                handleCommunicationFailure(device);
             }
 
             @Override
@@ -57,8 +50,6 @@ public class CommunicatorImpl implements Communicator {
 
 
     public void switchRelay(Device device, RelayModel relayModel) {
-
-
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
                 .host(device.getUrlAddress())
@@ -74,9 +65,7 @@ public class CommunicatorImpl implements Communicator {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-
-                presenter.updateDevice(device, Error.COMUNICATING_ERROR);
+                handleCommunicationFailure(device);
 
             }
 
@@ -84,22 +73,24 @@ public class CommunicatorImpl implements Communicator {
             public void onResponse(Call call, final Response response) throws IOException {
                 handleDeviceResponce(response, device);
             }
-
         });
-
     }
 
     private void handleDeviceResponce(Response response, Device device) throws IOException {
+        String responseString = null;
         try {
             if (!response.isSuccessful()) {
                 presenter.updateDevice(device, Error.COMUNICATING_ERROR);
                 return;
             }
-            String res = response.body().string();
-            presenter.updateDevice(device, res);
+            responseString = response.body().string();
         } catch (Exception e) {
             presenter.updateDevice(device, Error.COMUNICATING_ERROR);
         }
+        presenter.updateDevice(device, responseString);
     }
 
+    private void handleCommunicationFailure(Device device) {
+        presenter.updateDevice(device, Error.COMUNICATING_ERROR);
+    }
 }

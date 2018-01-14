@@ -1,8 +1,5 @@
 package kolevmobile.com.smarthome.custom_components;
 
-/**
- * Created by x on 19.11.2017 г..
- */
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

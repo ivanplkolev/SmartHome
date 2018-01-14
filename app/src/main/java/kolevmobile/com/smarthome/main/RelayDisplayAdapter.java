@@ -79,7 +79,6 @@ public class RelayDisplayAdapter extends RecyclerView.Adapter<RelayDisplayAdapte
             holder.relayTogglerInfo.setVisibility(View.INVISIBLE);
             holder.relayTogglerButton.setVisibility(View.VISIBLE);
         } else {
-            holder.relayTogglerInfo.setText(context.getString(R.string.not_info));
             holder.relayTogglerInfo.setVisibility(View.VISIBLE);
             holder.relayTogglerButton.setVisibility(View.INVISIBLE);
         }

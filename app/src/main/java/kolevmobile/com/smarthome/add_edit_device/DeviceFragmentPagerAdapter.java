@@ -1,6 +1,7 @@
 package kolevmobile.com.smarthome.add_edit_device;
 
-import android.support.v4.app.*;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 public class DeviceFragmentPagerAdapter extends FragmentPagerAdapter {
