@@ -49,5 +49,6 @@
     <string name="sensors">Sensors</string>
     <string name="relays">Relays</string>
     <string name="about">About</string>
+    <string name="details">Details</string>
 
 </resources>

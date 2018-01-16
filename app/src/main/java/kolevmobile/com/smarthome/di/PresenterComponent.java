@@ -8,6 +8,8 @@ import kolevmobile.com.smarthome.add_edit_device.AddEditPresenter;
 import kolevmobile.com.smarthome.add_edit_device.DeviceGeneralFragment;
 import kolevmobile.com.smarthome.add_edit_device.DeviceRelaysFragment;
 import kolevmobile.com.smarthome.add_edit_device.DeviceSenosrsFragment;
+import kolevmobile.com.smarthome.details.DetailsActivity;
+import kolevmobile.com.smarthome.details.DetailsPresenter;
 import kolevmobile.com.smarthome.main.MainActivity;
 import kolevmobile.com.smarthome.main.MainPresenter;
 
@@ -21,6 +23,7 @@ public interface PresenterComponent {
 
     AddEditPresenter getAddEditPresenter();
 
+    DetailsPresenter getDetailsPresenter();
 
     void inject(MainActivity mainActivity);
 
@@ -31,4 +34,6 @@ public interface PresenterComponent {
     void inject(DeviceRelaysFragment addEditDeviceActivity);
 
     void inject(DeviceSenosrsFragment addEditDeviceActivity);
+
+    void inject(DetailsActivity detailsActivity);
 }

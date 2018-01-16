@@ -8,22 +8,36 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
-import kolevmobile.com.smarthome.model.SensorValue;
+import java.util.Map;
 
 public class DetailsChartView extends View {
 
-    private List<SensorValue> values;
-    float minVal;
-    float maxVal;
-    long startDate;
-    long endDate;
+    ChartUtils utils;
+
+    private SimpleDateFormat sdf;
 
     static final Paint pointPaint = new Paint();
 
     static final Paint linePaint = new Paint();
+
+    static final Paint textDatePaint = new Paint();
+    static final Paint textValuePaint = new Paint();
+
+    static {
+        pointPaint.setColor(Color.RED);
+        pointPaint.setStyle(Paint.Style.FILL);
+        linePaint.setColor(Color.BLUE);
+        linePaint.setStrokeWidth(5);
+        linePaint.setStyle(Paint.Style.STROKE);
+        textValuePaint.setColor(Color.RED);
+        textValuePaint.setTextSize(30);
+        textDatePaint.setColor(Color.DKGRAY);
+        textDatePaint.setTextSize(30);
+        textDatePaint.setTextAlign(Paint.Align.CENTER);
+        textValuePaint.setTextAlign(Paint.Align.CENTER);
+    }
 
     public DetailsChartView(Context context) {
         super(context);
@@ -33,55 +47,62 @@ public class DetailsChartView extends View {
         super(context, attrs);
     }
 
-    public void setValues(List<SensorValue> values) {
-        this.values = values;
-        calculateChart();
+    public void update(DetailModel detailModel) {
+        this.utils = new ChartUtils(detailModel.getSensorValueList(), detailModel.getDetailsPeriod());
+        this.sdf = detailModel.getDetailsPeriod().getSdf();
     }
 
-    private void calculateChart() {
-        minVal = Float.MAX_VALUE;
-        maxVal = Float.MIN_VALUE;
-        startDate = values.get(0).getMeasuredAt().getTime();
-        endDate = values.get(values.size() - 1).getMeasuredAt().getTime();
-        for (SensorValue value : values) {
-            Float val = value.getValue();
-            Date date = value.getMeasuredAt();
-            if (val < minVal) {
-                minVal = val;
-            }
-            if (val > maxVal) {
-                maxVal = val;
-            }
-        }
-        pointPaint.setColor(Color.RED);
-        pointPaint.setStyle(Paint.Style.FILL);
-        linePaint.setColor(Color.BLUE);
-        linePaint.setStrokeWidth(5);
-        linePaint.setStyle(Paint.Style.STROKE);
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (values == null) {
+        if (utils == null) {
             return;
         }
         float width = getWidth();
         float height = getHeight();
 
-        float horizontalStep = width / (endDate - startDate);
-        float verticalStep = height / (maxVal - minVal);
+        float startW = 0.2f * width;
+        float startH = 0.1f * height;
+
+        float endW = 0.9f * width;
+        float endH = 0.8f * height;
+
+        float dateLine = 0.9f * height;
+        float valuesLine = 0.1f * width;
+
+
+        float horizontalStep = (endW - startW) / (utils.getMaxDate().getTime() - utils.getMinDate().getTime() != 0 ? utils.getMaxDate().getTime() - utils.getMinDate().getTime() : 2);
+        float verticalStep = (endH - startH) / (utils.getMaxRounded() - utils.getMinRounded());
+
+        //debug:
+//        canvas.drawRect(startW, startH, endW, endH, new Paint());
+//        canvas.drawLine(valuesLine, startH, valuesLine, endH, textDatePaint);
+//        canvas.drawLine(startW, dateLine, endW, dateLine, textValuePaint);
+
+        for (float i = utils.getMinRounded(); i <= utils.getMaxRounded(); i += 1 / utils.getScale()) {
+            int pointY = (int) (endH - ((i - utils.getMinRounded()) * verticalStep));
+            canvas.drawText(String.valueOf(i), valuesLine, pointY, textValuePaint);
+            canvas.drawLine(startW, pointY, endW, pointY, textValuePaint);
+        }
+
 
         Path chartPath = new Path();
-        for (int i = 0; i < values.size(); i++) {
-            SensorValue val = values.get(i);
-            int pointX = (int) ((val.getMeasuredAt().getTime() - startDate) * horizontalStep);
-            int pointY = (int) ((val.getValue() - minVal) * verticalStep);
-            if (i == 0) {
+
+        Map<Date, Float> values = utils.getvalues();
+        boolean notStarted = true;
+        for (Map.Entry<Date, Float> val : values.entrySet()) {
+            Date date = val.getKey();
+            Float value = val.getValue();
+            int pointX = (int) ((int) startW + ((utils.getMinDate().getTime() == utils.getMaxDate().getTime() ? 1 : date.getTime() - utils.getMinDate().getTime()) * horizontalStep));
+            int pointY = (int) (endH - ((value - utils.getMinRounded()) * verticalStep));
+            if (notStarted) {
                 chartPath.moveTo(pointX, pointY);
+                notStarted = false;
             } else {
                 chartPath.lineTo(pointX, pointY);
             }
-            canvas.drawCircle(pointX, pointY, 8, pointPaint);
+            canvas.drawText(sdf.format(date), pointX, dateLine, textDatePaint);
+            canvas.drawCircle(pointX, pointY, 12, pointPaint);
         }
         canvas.drawPath(chartPath, linePaint);
     }

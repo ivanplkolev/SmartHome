@@ -1,8 +1,5 @@
 package kolevmobile.com.smarthome.details;
 
-/**
- * Created by me on 05/11/2017.
- */
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -14,13 +11,13 @@ import android.widget.TextView;
 import java.util.List;
 
 import kolevmobile.com.smarthome.R;
-import kolevmobile.com.smarthome.model.SensorModel;
 
 
 public class DetailsChartsAdapter extends RecyclerView.Adapter<DetailsChartsAdapter.MyView> {
 
-    private List<SensorModel> sensorModelList;
+    private List<DetailModel> detailModelList;
     private Context context;
+
 
     class MyView extends RecyclerView.ViewHolder {
 
@@ -34,9 +31,12 @@ public class DetailsChartsAdapter extends RecyclerView.Adapter<DetailsChartsAdap
         }
     }
 
-    DetailsChartsAdapter(List<SensorModel> sensorModelList, Context context) {
+    DetailsChartsAdapter(Context context) {
         this.context = context;
-        this.sensorModelList = sensorModelList;
+    }
+
+    void setDetailModelList(List<DetailModel> detailModelList) {
+        this.detailModelList = detailModelList;
     }
 
     @Override
@@ -47,14 +47,14 @@ public class DetailsChartsAdapter extends RecyclerView.Adapter<DetailsChartsAdap
 
     @Override
     public void onBindViewHolder(final MyView holder, final int position) {
-        SensorModel sensorModel = sensorModelList.get(position);
-        holder.sensorNameTextView.setText(sensorModel.getName());
-        holder.detailsChartView.setValues(sensorModel.getSensroValueList());
+        DetailModel detailModel = detailModelList.get(position);
+        holder.sensorNameTextView.setText(detailModel.getName());
+        holder.detailsChartView.update(detailModel);
     }
 
     @Override
     public int getItemCount() {
-        return sensorModelList.size();
+        return detailModelList != null ? detailModelList.size() : 0;
     }
 
 }
