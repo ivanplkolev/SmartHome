@@ -12,6 +12,9 @@ import kolevmobile.com.smarthome.details.DetailsActivity;
 import kolevmobile.com.smarthome.details.DetailsPresenter;
 import kolevmobile.com.smarthome.main.MainActivity;
 import kolevmobile.com.smarthome.main.MainPresenter;
+import kolevmobile.com.smarthome.widget.WidgetPresenter;
+import kolevmobile.com.smarthome.widget.WidgetService;
+import kolevmobile.com.smarthome.widget.WidgetSettingsActivity;
 
 
 @Singleton
@@ -25,6 +28,8 @@ public interface PresenterComponent {
 
     DetailsPresenter getDetailsPresenter();
 
+    WidgetPresenter getWidgetPresenter();
+
     void inject(MainActivity mainActivity);
 
     void inject(AddEditDeviceActivity addEditDeviceActivity);
@@ -36,4 +41,8 @@ public interface PresenterComponent {
     void inject(DeviceSenosrsFragment addEditDeviceActivity);
 
     void inject(DetailsActivity detailsActivity);
+
+    void inject(WidgetSettingsActivity widgetSettingsActivity);
+
+    void inject(WidgetService widgetService);
 }

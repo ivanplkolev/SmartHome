@@ -6,10 +6,9 @@
     android:padding="8sp">
 
     <Button
-        android:id="@+id/refreshButton"
+        android:id="@+id/refreshButtonWidget"
         android:layout_width="75sp"
-        android:layout_height="75sp"
-        android:text="Refresh" />
+        android:layout_height="75sp"  />
 
 
     <LinearLayout

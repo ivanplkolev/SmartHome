@@ -4,11 +4,12 @@ import android.os.Handler;
 
 import java.util.List;
 
+import kolevmobile.com.smarthome.Presenter;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.Error;
 
 
-public interface MainPresenter {
+public interface MainPresenter extends Presenter{
 
     void onCreate();
 

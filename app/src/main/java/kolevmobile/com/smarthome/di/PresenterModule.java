@@ -11,6 +11,8 @@ import kolevmobile.com.smarthome.details.DetailsPresenterImpl;
 import kolevmobile.com.smarthome.main.MainPresenter;
 import kolevmobile.com.smarthome.main.MainPresenterImpl;
 import kolevmobile.com.smarthome.model.DaoSession;
+import kolevmobile.com.smarthome.widget.WidgetPresenter;
+import kolevmobile.com.smarthome.widget.WidgetPresenterImpl;
 
 
 @Module
@@ -38,5 +40,11 @@ public class PresenterModule {
     @Singleton
     DetailsPresenter getDetailsPresenter() {
         return new DetailsPresenterImpl(daoSession);
+    }
+
+    @Provides
+    @Singleton
+    WidgetPresenter getWidgetPresenter() {
+        return new WidgetPresenterImpl(daoSession);
     }
 }

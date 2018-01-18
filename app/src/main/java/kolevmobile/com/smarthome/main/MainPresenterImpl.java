@@ -3,12 +3,7 @@ package kolevmobile.com.smarthome.main;
 import android.os.Handler;
 import android.os.Message;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,11 +19,8 @@ import kolevmobile.com.smarthome.model.DeviceDao;
 import kolevmobile.com.smarthome.model.Error;
 import kolevmobile.com.smarthome.model.RelayModel;
 import kolevmobile.com.smarthome.model.RelayModelDao;
-import kolevmobile.com.smarthome.model.RelayStatus;
 import kolevmobile.com.smarthome.model.RelayStatusDao;
-import kolevmobile.com.smarthome.model.SensorModel;
 import kolevmobile.com.smarthome.model.SensorModelDao;
-import kolevmobile.com.smarthome.model.SensorValue;
 import kolevmobile.com.smarthome.model.SensorValueDao;
 
 public class MainPresenterImpl implements MainPresenter {
@@ -39,20 +31,23 @@ public class MainPresenterImpl implements MainPresenter {
     private SensorValueDao sensorValueDao;
     private RelayModelDao relayModelDao;
     private RelayStatusDao relayStatusDao;
+    private DaoSession daoSession;
 
     private Handler mainHandler;
-    private DeviceResponceParser parser;
+
+    @Inject
+    DeviceResponceParser parser;
 
     @Inject
     Communicator communicator;
 
     public MainPresenterImpl(DaoSession daoSession) {
+        this.daoSession = daoSession;
         this.deviceDao = daoSession.getDeviceDao();
         this.sensorModelDao = daoSession.getSensorModelDao();
         this.sensorValueDao = daoSession.getSensorValueDao();
         this.relayModelDao = daoSession.getRelayModelDao();
         this.relayStatusDao = daoSession.getRelayStatusDao();
-        this.parser = new DeviceResponceParserImpl();
     }
 
 
@@ -166,51 +161,13 @@ public class MainPresenterImpl implements MainPresenter {
 
     }
 
+    @Override
+    public DaoSession getDaoSession() {
+        return daoSession;
+    }
+
     public void setMainHandler(Handler mainHandler) {
         this.mainHandler = mainHandler;
     }
 
-
-    class DeviceResponceParserImpl implements DeviceResponceParser {
-
-        public void updateDevice(Device device, String responce) {
-            try {
-                JsonElement jelement = new JsonParser().parse(responce);
-                JsonObject jobject = jelement.getAsJsonObject();
-                String errorString = jobject.get(ERROR_KEY).getAsString();
-                if (errorString != null && errorString.length() != 0) {
-                    device.setError(Error.fromString(errorString));
-                    return;
-                }
-                Date currentDate = new Date();
-                for (SensorModel sensorModel : device.getSensorModelList()) {
-                    float result = jobject.get(sensorModel.getKey()).getAsFloat();
-                    SensorValue sensorValue = new SensorValue();
-                    sensorValue.setMeasuredAt(currentDate);
-                    sensorValue.setValue(result);
-                    sensorValue.setSensorModelId(sensorModel.getId());
-                    sensorValueDao.insert(sensorValue);
-                    sensorModel.setActualValue(sensorValue);
-                    sensorModel.setActualValueId(sensorValue.getId());
-                    sensorModel.getSensroValueList().add(sensorValue);
-                    sensorModelDao.update(sensorModel);
-                }
-                for (RelayModel relayModel : device.getRelayModelList()) {
-                    int result = jobject.get(relayModel.getKey()).getAsInt();
-                    RelayStatus relayStatus = new RelayStatus();
-                    relayStatus.setRelayModelId(relayModel.getId());
-                    relayStatus.setValue(result);
-                    relayStatus.setSentAt(currentDate);
-                    relayStatusDao.insert(relayStatus);
-                    relayModel.setActualStatus(relayStatus);
-                    relayModel.setActualStatusId(relayStatus.getId());
-                    relayModelDao.update(relayModel);
-                }
-                device.setActualizationDate(currentDate);
-                deviceDao.update(device);
-            } catch (Exception e) {
-                    device.setError(Error.SCHEMA_ERROR);
-            }
-        }
-    }
 }

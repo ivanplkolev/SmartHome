@@ -2,7 +2,7 @@ package kolevmobile.com.smarthome.connection;
 
 import java.io.IOException;
 
-import kolevmobile.com.smarthome.main.MainPresenter;
+import kolevmobile.com.smarthome.Presenter;
 import kolevmobile.com.smarthome.model.Device;
 import kolevmobile.com.smarthome.model.Error;
 import kolevmobile.com.smarthome.model.RelayModel;
@@ -19,9 +19,9 @@ public class CommunicatorImpl implements Communicator {
 
     private static OkHttpClient client = new OkHttpClient();
 
-    private MainPresenter presenter;
+    private Presenter presenter;
 
-    public CommunicatorImpl(MainPresenter presenter) {
+    public CommunicatorImpl(Presenter presenter) {
         this.presenter = presenter;
     }
 

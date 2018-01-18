@@ -22,21 +22,24 @@
         <activity android:name=".details.DetailsActivity">
         </activity>
 
-        <activity android:name=".add_edit_device.AddEditDeviceActivity">
-        </activity>
+        <activity android:name=".add_edit_device.AddEditDeviceActivity" />
 
-        <activity android:name=".about.AboutActivity">
-        </activity>
+        <activity android:name=".about.AboutActivity" />
+
+        <activity android:name=".widget.WidgetSettingsActivity" />
+
+        <receiver android:name=".widget.WidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
+        <service android:enabled="true" android:name=".widget.WidgetService" />
 
 
-        <!--<receiver android:name=".widget.WidgetProvider">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-            <!--</intent-filter>-->
-            <!--<meta-data-->
-                <!--android:name="android.appwidget.provider"-->
-                <!--android:resource="@xml/widget_info" />-->
-        <!--</receiver>-->
     </application>
 
 </manifest>
