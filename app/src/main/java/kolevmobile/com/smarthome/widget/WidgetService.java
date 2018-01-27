@@ -31,16 +31,18 @@ public class WidgetService extends IntentService {
 
         int widgetId = intent.getIntExtra(WIDGET_ID, 0);
         int widgetType = intent.getIntExtra(WIDGET_TYPE, 0);
+        String action = intent.getAction();
 
-        switch (intent.getAction()) {
+
+        switch (action) {
             case ACTION_ADD:
                 presenter.createWidget(widgetId, widgetType);
                 break;
             case ACTION_CLICK:
-                presenter.onClick(widgetId);
+                presenter.onClick(widgetId, widgetType);
                 break;
             case ACTION_DELETE:
-                presenter.deleteWidget(widgetId);
+                presenter.deleteWidget(widgetId, widgetType);
                 break;
         }
 

@@ -32,11 +32,15 @@ public class RelayModel {
     @ToOne(joinProperty = "actualStatusId")
     private RelayStatus actualStatus;
 
-    /** Used to resolve relations */
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 1231157592)
     private transient RelayModelDao myDao;
 
@@ -45,7 +49,7 @@ public class RelayModel {
 
     @Generated(hash = 987338136)
     public RelayModel(Long id, Long deviceId, Integer position, String name, String description,
-            String key, Long actualStatusId) {
+                      String key, Long actualStatusId) {
         this.id = id;
         this.deviceId = deviceId;
         this.position = position;
@@ -130,7 +134,9 @@ public class RelayModel {
         return relayStatusListlList;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 448484918)
     public synchronized void resetRelayStatusListlList() {
         relayStatusListlList = null;
@@ -180,7 +186,9 @@ public class RelayModel {
         this.actualStatusId = actualStatusId;
     }
 
-    /** To-one relationship, resolved on first access. */
+    /**
+     * To-one relationship, resolved on first access.
+     */
     @Generated(hash = 401773974)
     public RelayStatus getActualStatus() {
         Long __key = this.actualStatusId;
@@ -199,7 +207,9 @@ public class RelayModel {
         return actualStatus;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
+    /**
+     * called by internal mechanisms, do not call yourself.
+     */
     @Generated(hash = 558723468)
     public void setActualStatus(RelayStatus actualStatus) {
         synchronized (this) {
@@ -215,8 +225,6 @@ public class RelayModel {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getRelayModelDao() : null;
     }
-
-
 
 
 }

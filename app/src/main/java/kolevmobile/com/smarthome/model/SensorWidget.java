@@ -1,23 +1,20 @@
 package kolevmobile.com.smarthome.model;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.DaoException;
 
 @Entity
-public class Widget {
-
-   public  final static int TYPE_SENSOR = 1;
-   public final static int TYPE_RELAY = 2;
+public class SensorWidget {
 
 
     @Id
     private Long id;
 
-    @Index(unique=true)
+    @Index(unique = true)
     private Integer widgetiD;
 
     private Long deviceId;
@@ -30,51 +27,25 @@ public class Widget {
     @ToOne(joinProperty = "sensorModelId")
     private SensorModel sensorModel;
 
-    private Long relayModelId;
-
-    @ToOne(joinProperty = "relayModelId")
-    private RelayModel relayModel;
-
-    private Integer type;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
+
     /** Used for active entity operations. */
-    @Generated(hash = 142730641)
-    private transient WidgetDao myDao;
+    @Generated(hash = 534575082)
+    private transient SensorWidgetDao myDao;
 
-
-
-    @Generated(hash = 1073296571)
-    public Widget(Long id, Integer widgetiD, Long deviceId, Long sensorModelId,
-            Long relayModelId, Integer type) {
+    @Generated(hash = 1235129533)
+    public SensorWidget(Long id, Integer widgetiD, Long deviceId,
+            Long sensorModelId) {
         this.id = id;
         this.widgetiD = widgetiD;
         this.deviceId = deviceId;
         this.sensorModelId = sensorModelId;
-        this.relayModelId = relayModelId;
-        this.type = type;
     }
 
-    @Generated(hash = 938966889)
-    public Widget() {
-    }
-
-    @Generated(hash = 708752895)
-    private transient Long device__resolvedKey;
-    @Generated(hash = 1078709724)
-    private transient Long sensorModel__resolvedKey;
-    @Generated(hash = 1052194195)
-    private transient Long relayModel__resolvedKey;
-
-
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
+    @Generated(hash = 1418029049)
+    public SensorWidget() {
     }
 
     public Long getId() {
@@ -83,6 +54,14 @@ public class Widget {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getWidgetiD() {
+        return this.widgetiD;
+    }
+
+    public void setWidgetiD(Integer widgetiD) {
+        this.widgetiD = widgetiD;
     }
 
     public Long getDeviceId() {
@@ -101,13 +80,8 @@ public class Widget {
         this.sensorModelId = sensorModelId;
     }
 
-    public Long getRelayModelId() {
-        return this.relayModelId;
-    }
-
-    public void setRelayModelId(Long relayModelId) {
-        this.relayModelId = relayModelId;
-    }
+    @Generated(hash = 708752895)
+    private transient Long device__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1120785031)
@@ -138,6 +112,9 @@ public class Widget {
         }
     }
 
+    @Generated(hash = 1078709724)
+    private transient Long sensorModel__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 531236245)
     public SensorModel getSensorModel() {
@@ -165,36 +142,6 @@ public class Widget {
             this.sensorModel = sensorModel;
             sensorModelId = sensorModel == null ? null : sensorModel.getId();
             sensorModel__resolvedKey = sensorModelId;
-        }
-    }
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 132275092)
-    public RelayModel getRelayModel() {
-        Long __key = this.relayModelId;
-        if (relayModel__resolvedKey == null
-                || !relayModel__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            RelayModelDao targetDao = daoSession.getRelayModelDao();
-            RelayModel relayModelNew = targetDao.load(__key);
-            synchronized (this) {
-                relayModel = relayModelNew;
-                relayModel__resolvedKey = __key;
-            }
-        }
-        return relayModel;
-    }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 39578693)
-    public void setRelayModel(RelayModel relayModel) {
-        synchronized (this) {
-            this.relayModel = relayModel;
-            relayModelId = relayModel == null ? null : relayModel.getId();
-            relayModel__resolvedKey = relayModelId;
         }
     }
 
@@ -234,20 +181,10 @@ public class Widget {
         myDao.update(this);
     }
 
-    public Integer getWidgetiD() {
-        return this.widgetiD;
-    }
-
-    public void setWidgetiD(Integer widgetiD) {
-        this.widgetiD = widgetiD;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 403624969)
+    @Generated(hash = 477244328)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getWidgetDao() : null;
+        myDao = daoSession != null ? daoSession.getSensorWidgetDao() : null;
     }
-
-   
 }

@@ -2,7 +2,7 @@
     android:minWidth="120dp"
     android:minHeight="60dp"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/widget_layout"
+    android:initialLayout="@layout/sensor_widget_layout"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen|keyguard"
     android:previewImage="@mipmap/ic_launcher_round">

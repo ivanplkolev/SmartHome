@@ -6,28 +6,18 @@ import java.util.List;
 
 import kolevmobile.com.smarthome.Presenter;
 import kolevmobile.com.smarthome.model.Device;
-import kolevmobile.com.smarthome.model.RelayModel;
-import kolevmobile.com.smarthome.model.SensorModel;
-import kolevmobile.com.smarthome.model.Widget;
-
 
 public interface WidgetPresenter extends Presenter {
 
-    void onClick(int widgetId);
+    void onClick(int widgetId, int widgetType);
 
     void initWidget(int widgetId);
 
-    void finishInitWidget(Widget widget, SensorModel sensorModel);
-
-    void finishInitWidget(Widget widget, RelayModel relayModel);
-
-    void refreshSensor(Widget widget);
-
-    void switchRelay(Widget widget);
+    void finishInitWidget(long widgetId, int WidgetType, Object model);
 
     void createWidget(int widgetId, int widgetType);
 
-    void deleteWidget(int widgetId);
+    void deleteWidget(int widgetId, int widgetType);
 
     public void setContext(Context context);
 

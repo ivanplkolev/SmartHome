@@ -12,10 +12,17 @@ import android.widget.RemoteViews;
 import kolevmobile.com.smarthome.R;
 
 
-public class WidgetProvider extends AppWidgetProvider {
+public abstract class WidgetProvider extends AppWidgetProvider {
+
+
+    public static final int WIDGET_TYPE_SENSOR = 1;
+    public static final int WIDGET_TYPE_RELAY = 2;
+
 
     private static final String TAG = "IVAN DEBUG " + WidgetProvider.class.getSimpleName();
     public static final String ACTION_WidgetProvider_CLICKED = "ivan.pl.kolev.CLICKED_";
+
+    int widgetType = 0;
 
     @Override
     public void onEnabled(Context context) {
@@ -36,7 +43,7 @@ public class WidgetProvider extends AppWidgetProvider {
             Log.d(TAG, "onDeleted()" + appWidgetId);
 
 
-            callServiceDeleted(appWidgetId, context);
+            callServiceDeleted(appWidgetId, context, widgetType);
         }
     }
 
@@ -44,7 +51,7 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate()");
-        updateAppWidgets(context);
+        updateAppWidgets(context, widgetType);
     }
 
     @Override
@@ -57,7 +64,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 int widgetId = Integer.parseInt(action.substring(ACTION_WidgetProvider_CLICKED.length()));
                 Log.d(TAG, "onReceive() ckicked " + widgetId);
 
-                callServiceClicked(widgetId, context);
+                callServiceClicked(widgetId, context, widgetType);
 
             } else if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(intent.getAction())) {
                 Log.d(TAG, "onReceive() UPDATE ");
@@ -66,50 +73,53 @@ public class WidgetProvider extends AppWidgetProvider {
     }
 
 
-    static public void updateAppWidgets(final Context context) {
+    static public void updateAppWidgets(final Context context, int widgetType) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName widgetComponent = new ComponentName(context, WidgetProvider.class);
         int[] widgetIds = appWidgetManager.getAppWidgetIds(widgetComponent);
         for (int id : widgetIds) {
             WidgetProvider.updateAppWidget(context, appWidgetManager, id);
-            callServiceWidgetCreated(id, context);
+            callServiceWidgetCreated(id, context, widgetType);
         }
     }
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+        RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.sensor_widget_layout);
 
         Intent intent = new Intent(context, WidgetProvider.class);
         intent.setAction(ACTION_WidgetProvider_CLICKED + String.valueOf(appWidgetId));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        updateViews.setOnClickPendingIntent(R.id.refreshButtonWidget, pendingIntent);
+        updateViews.setOnClickPendingIntent(R.id.wholeWidgetLayout, pendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, updateViews);
     }
 
 
-    private static void callServiceWidgetCreated(int id, Context context) {
+    private static void callServiceWidgetCreated(int id, Context context, int widgetType) {
         Intent serviceIntent = new Intent(context, WidgetService.class);
         serviceIntent.setAction(WidgetService.ACTION_ADD);
         serviceIntent.putExtra(WidgetService.WIDGET_ID, id);
+        serviceIntent.putExtra(WidgetService.WIDGET_TYPE, widgetType);
         context.startService(serviceIntent);
     }
 
 
-    private void callServiceClicked(int widgetId, Context context) {
+    private static void callServiceClicked(int widgetId, Context context, int widgetType) {
         Intent serviceIntent = new Intent(context, WidgetService.class);
         serviceIntent.setAction(WidgetService.ACTION_CLICK);
         serviceIntent.putExtra(WidgetService.WIDGET_ID, widgetId);
+        serviceIntent.putExtra(WidgetService.WIDGET_TYPE, widgetType);
         context.startService(serviceIntent);
 
     }
 
 
-    private void callServiceDeleted(int appWidgetId, Context context) {
+    private static void callServiceDeleted(int appWidgetId, Context context, int widgetType) {
         Intent serviceIntent = new Intent(context, WidgetService.class);
         serviceIntent.setAction(WidgetService.ACTION_DELETE);
         serviceIntent.putExtra(WidgetService.WIDGET_ID, appWidgetId);
+        serviceIntent.putExtra(WidgetService.WIDGET_TYPE, widgetType);
         context.startService(serviceIntent);
 
     }
