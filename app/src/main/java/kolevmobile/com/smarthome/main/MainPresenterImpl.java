@@ -1,13 +1,18 @@
 package kolevmobile.com.smarthome.main;
 
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.connection.Communicator;
 import kolevmobile.com.smarthome.connection.DeviceResponceParser;
 import kolevmobile.com.smarthome.di.CommunicatorComponent;
@@ -20,8 +25,12 @@ import kolevmobile.com.smarthome.model.Error;
 import kolevmobile.com.smarthome.model.RelayModel;
 import kolevmobile.com.smarthome.model.RelayModelDao;
 import kolevmobile.com.smarthome.model.RelayStatusDao;
+import kolevmobile.com.smarthome.model.RelayWidget;
+import kolevmobile.com.smarthome.model.RelayWidgetDao;
 import kolevmobile.com.smarthome.model.SensorModelDao;
 import kolevmobile.com.smarthome.model.SensorValueDao;
+import kolevmobile.com.smarthome.model.SensorWidget;
+import kolevmobile.com.smarthome.model.SensorWidgetDao;
 
 public class MainPresenterImpl implements MainPresenter {
 
@@ -110,7 +119,7 @@ public class MainPresenterImpl implements MainPresenter {
         message.obj = device;
         message.what = MainActivity.MainHandler.DO_UPDATE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
-        communicator.getDeviceStatus(device);
+        communicator.getDeviceStatus(this, device);
     }
 
     @Override
@@ -134,7 +143,7 @@ public class MainPresenterImpl implements MainPresenter {
         RelayModel updatingRelay = updatingDevice.getRelayModelList().get(subPosition);
         int newStatus = isChecked ? 1 : 0;
         updatingRelay.getActualStatus().setValue(newStatus);
-        communicator.switchRelay(activeDevices.get(position), updatingRelay);
+        communicator.switchRelay(this, activeDevices.get(position), updatingRelay);
     }
 
 
@@ -146,6 +155,9 @@ public class MainPresenterImpl implements MainPresenter {
         message.obj = device;
         message.what = MainActivity.MainHandler.DO_UPDATE_DEVICE_VIEW;
         mainHandler.sendMessage(message);
+
+
+        updateAllDeviceViews(device);
     }
 
     public List<Device> getActiveDevices() {
@@ -169,5 +181,41 @@ public class MainPresenterImpl implements MainPresenter {
     public void setMainHandler(Handler mainHandler) {
         this.mainHandler = mainHandler;
     }
+    public void setContext(Context
+                                   context) {
+        this.context = context;
+    }
+
+    private  Context context;
+
+
+    private void updateAllDeviceViews(Device device) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+
+        List<SensorWidget> sensorWidgets = daoSession.getSensorWidgetDao().queryBuilder().where(SensorWidgetDao.Properties.DeviceId.eq(device.getId())).list();
+        for (SensorWidget widget : sensorWidgets) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.sensor_widget_layout);
+            remoteViews.setViewVisibility(R.id.initSensorWidget, View.GONE);
+            remoteViews.setViewVisibility(R.id.sensorWidgetCardview, View.VISIBLE);
+            remoteViews.setTextViewText(R.id.sensor_name, widget.getSensorModel().getName());
+            remoteViews.setTextViewText(R.id.sensor_value, widget.getSensorModel().getActualValue().getValue().toString());
+            remoteViews.setTextViewText(R.id.sensor_units, widget.getSensorModel().getUnits());
+            appWidgetManager.updateAppWidget(widget.getWidgetiD(), remoteViews);
+        }
+
+        List<RelayWidget> relayWidgets = daoSession.getRelayWidgetDao().queryBuilder().where(RelayWidgetDao.Properties.DeviceId.eq(device.getId())).list();
+        for (RelayWidget widget : relayWidgets) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.relay_widget_layout);
+            remoteViews.setViewVisibility(R.id.initRelayWidget, View.GONE);
+            remoteViews.setViewVisibility(R.id.relayWidgetCardView, View.VISIBLE);
+            remoteViews.setViewVisibility(R.id.relay_toggler_info, View.INVISIBLE);
+            remoteViews.setTextViewText(R.id.relay_toggler_name, widget.getRelayModel().getName());
+            remoteViews.setViewVisibility(R.id.relay_toggler_on, widget.getRelayModel().getActualStatus().getValue() == 1f ? View.VISIBLE : View.INVISIBLE);
+            remoteViews.setViewVisibility(R.id.relay_toggler_off, widget.getRelayModel().getActualStatus().getValue() == 0f ? View.VISIBLE : View.INVISIBLE);
+            appWidgetManager.updateAppWidget(widget.getWidgetiD(), remoteViews);
+        }
+
+    }
+
 
 }

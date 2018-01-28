@@ -1,5 +1,6 @@
 package kolevmobile.com.smarthome.main;
 
+import android.content.Context;
 import android.os.Handler;
 
 import java.util.List;
@@ -37,4 +38,5 @@ public interface MainPresenter extends Presenter{
     void updateDevice(Device device, Error error);
 
     public void setMainHandler(Handler mainHandler) ;
+    public void setContext(Context mainHandler) ;
     }

@@ -1,10 +1,8 @@
 package kolevmobile.com.smarthome.widget;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -27,7 +25,6 @@ import kolevmobile.com.smarthome.model.RelayWidgetDao;
 import kolevmobile.com.smarthome.model.SensorModel;
 import kolevmobile.com.smarthome.model.SensorWidget;
 import kolevmobile.com.smarthome.model.SensorWidgetDao;
-import kolevmobile.com.smarthome.model.WidgetDao;
 
 
 public class WidgetPresenterImpl implements WidgetPresenter {
@@ -47,6 +44,7 @@ public class WidgetPresenterImpl implements WidgetPresenter {
 
 
     public WidgetPresenterImpl(DaoSession daoSession) {
+        this.daoSession = daoSession;
         this.sensorWidgetDao = daoSession.getSensorWidgetDao();
         this.relayWidgetDao = daoSession.getRelayWidgetDao();
         CommunicatorComponent component = DaggerCommunicatorComponent
@@ -60,34 +58,71 @@ public class WidgetPresenterImpl implements WidgetPresenter {
     public void onClick(int widgetId, int widgetType) {
         switch (widgetType) {
             case WidgetProvider.WIDGET_TYPE_SENSOR:
-                refreshSensor(widgetId);
+                SensorWidget widget = sensorWidgetDao.queryBuilder()
+                        .where(SensorWidgetDao.Properties.WidgetiD.eq(widgetId)).uniqueOrThrow();
+                if (widget.getDevice() == null) {
+                    initWidget(widgetId, widgetType);
+                } else {
+
+                    refreshSensor(widgetId);
+                }
+                break;
             case WidgetProvider.WIDGET_TYPE_RELAY:
-                switchRelay(widgetId);
+                RelayWidget widget1 = relayWidgetDao.queryBuilder()
+                        .where(RelayWidgetDao.Properties.WidgetiD.eq(widgetId)).uniqueOrThrow();
+                if (widget1.getDevice() == null) {
+                    initWidget(widgetId, widgetType);
+                } else {
+                    switchRelay(widgetId);
+                }
+                break;
         }
     }
 
     @Override
-    public void initWidget(int widgetId) {
+    public void initWidget(int widgetId, int widgetType) {
         Intent serviceIntent = new Intent(context, WidgetSettingsActivity.class);
         serviceIntent.putExtra(WidgetService.WIDGET_ID, widgetId);
-        context.startService(serviceIntent);
+        serviceIntent.putExtra(WidgetService.WIDGET_TYPE, widgetType);
+        context.startActivity(serviceIntent);
     }
 
     @Override
     public void finishInitWidget(long widgetId, int WidgetType, Object model) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         if (WidgetType == WidgetProvider.WIDGET_TYPE_SENSOR) {
             SensorModel sensorModel = (SensorModel) model;
-            SensorWidget sensorWidget = sensorWidgetDao.load(widgetId);
+            SensorWidget sensorWidget = sensorWidgetDao.queryBuilder()
+                    .where(SensorWidgetDao.Properties.WidgetiD.eq(widgetId)).unique();
             sensorWidget.setSensorModelId(sensorModel.getId());
             sensorWidget.setDeviceId(sensorModel.getDeviceId());
             sensorWidgetDao.update(sensorWidget);
+
+            Device device = daoSession.getDeviceDao().load(sensorModel.getDeviceId());
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.sensor_widget_layout);
+            remoteViews.setViewVisibility(R.id.initSensorWidget, View.GONE);
+            remoteViews.setTextViewText(R.id.sensor_device_name, device.getName());
+            appWidgetManager.updateAppWidget((int) widgetId, remoteViews);
+            updateAllDeviceViews(device);
+
         } else if (WidgetType == WidgetProvider.WIDGET_TYPE_RELAY) {
             RelayModel relayModel = (RelayModel) model;
-            RelayWidget relayWidget = relayWidgetDao.load(widgetId);
+            RelayWidget relayWidget = relayWidgetDao.queryBuilder()
+                    .where(RelayWidgetDao.Properties.WidgetiD.eq(widgetId)).unique();
             relayWidget.setRelayModelId(relayModel.getId());
-            relayModel.setDeviceId(relayModel.getDeviceId());
+            relayWidget.setDeviceId(relayModel.getDeviceId());
             relayWidgetDao.update(relayWidget);
+
+            Device device = daoSession.getDeviceDao().load(relayModel.getDeviceId());
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.relay_widget_layout);
+            remoteViews.setViewVisibility(R.id.initSensorWidget, View.GONE);
+            remoteViews.setTextViewText(R.id.relay_toggler_device_name, device.getName());
+            appWidgetManager.updateAppWidget((int) widgetId, remoteViews);
+            updateAllDeviceViews(device);
+
         }
+
+
     }
 
     private void refreshSensor(long widgetId) {
@@ -96,7 +131,7 @@ public class WidgetPresenterImpl implements WidgetPresenter {
         Device device = widget.getDevice();
         device.setRefreshing(true);
         updateAllDeviceViews(device);
-        communicator.getDeviceStatus(device);
+        communicator.getDeviceStatus(this, device);
     }
 
     private void switchRelay(long widgetId) {
@@ -108,19 +143,28 @@ public class WidgetPresenterImpl implements WidgetPresenter {
         boolean wasChecked = relayModel.getActualStatus().getValue() == 1;
         relayModel.getActualStatus().setValue(wasChecked ? 0 : 1);
         updateAllDeviceViews(device);
-        communicator.switchRelay(device, relayModel);
+        communicator.switchRelay(this, device, relayModel);
     }
 
     @Override
     public void createWidget(int widgetId, int widgetType) {
         if (widgetType == WidgetProvider.WIDGET_TYPE_SENSOR) {
-            SensorWidget widget = new SensorWidget();
-            widget.setWidgetiD(widgetId);
-            sensorWidgetDao.insert(widget);
+            SensorWidget existingWidget = sensorWidgetDao.queryBuilder().where(SensorWidgetDao.Properties.WidgetiD.eq(widgetId)).unique();
+            if (existingWidget == null) {
+
+                SensorWidget widget = new SensorWidget();
+                widget.setWidgetiD(widgetId);
+                sensorWidgetDao.insert(widget);
+            }
         } else if (widgetType == WidgetProvider.WIDGET_TYPE_RELAY) {
-            RelayWidget widget = new RelayWidget();
-            widget.setWidgetiD(widgetId);
-            relayWidgetDao.insert(widget);
+            RelayWidget existingWidget = relayWidgetDao.queryBuilder().where(RelayWidgetDao.Properties.WidgetiD.eq(widgetId)).unique();
+            if (existingWidget == null) {
+
+                RelayWidget widget = new RelayWidget();
+                widget.setWidgetiD(widgetId);
+                relayWidgetDao.insert(widget);
+            }
+
         }
     }
 
@@ -167,22 +211,27 @@ public class WidgetPresenterImpl implements WidgetPresenter {
     private void updateAllDeviceViews(Device device) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 
-        List<SensorWidget> widgets = sensorWidgetDao.queryBuilder().where(SensorWidgetDao.Properties.DeviceId.eq(device.getId())).list();
-        for (SensorWidget widget : widgets) {
+        List<SensorWidget> sensorWidgets = sensorWidgetDao.queryBuilder().where(SensorWidgetDao.Properties.DeviceId.eq(device.getId())).list();
+        for (SensorWidget widget : sensorWidgets) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.sensor_widget_layout);
             remoteViews.setViewVisibility(R.id.initSensorWidget, View.GONE);
             remoteViews.setViewVisibility(R.id.sensorWidgetCardview, View.VISIBLE);
+            remoteViews.setTextViewText(R.id.sensor_device_name, device.getName());
+
             remoteViews.setTextViewText(R.id.sensor_name, widget.getSensorModel().getName());
             remoteViews.setTextViewText(R.id.sensor_value, widget.getSensorModel().getActualValue().getValue().toString());
             remoteViews.setTextViewText(R.id.sensor_units, widget.getSensorModel().getUnits());
             appWidgetManager.updateAppWidget(widget.getWidgetiD(), remoteViews);
         }
 
-        List<RelayWidget> relayModels = relayWidgetDao.queryBuilder().where(RelayWidgetDao.Properties.DeviceId.eq(device.getId())).list();
-        for (RelayWidget widget : relayModels) {
+        List<RelayWidget> relayWidgets = relayWidgetDao.queryBuilder().where(RelayWidgetDao.Properties.DeviceId.eq(device.getId())).list();
+        for (RelayWidget widget : relayWidgets) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.relay_widget_layout);
             remoteViews.setViewVisibility(R.id.initRelayWidget, View.GONE);
             remoteViews.setViewVisibility(R.id.relayWidgetCardView, View.VISIBLE);
+            remoteViews.setViewVisibility(R.id.relay_toggler_info, View.INVISIBLE);
+            remoteViews.setTextViewText(R.id.relay_toggler_device_name, device.getName());
+
             remoteViews.setTextViewText(R.id.relay_toggler_name, widget.getRelayModel().getName());
             remoteViews.setViewVisibility(R.id.relay_toggler_on, widget.getRelayModel().getActualStatus().getValue() == 1f ? View.VISIBLE : View.INVISIBLE);
             remoteViews.setViewVisibility(R.id.relay_toggler_off, widget.getRelayModel().getActualStatus().getValue() == 0f ? View.VISIBLE : View.INVISIBLE);

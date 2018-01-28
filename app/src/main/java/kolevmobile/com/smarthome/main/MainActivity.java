@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
         ((App) getApplication()).getPresenterComponent().inject(this);
         presenter.setMainHandler(new MainHandler());
+        presenter.setContext(this);
 
         mainToolbar.setTitle("Main activity");
 

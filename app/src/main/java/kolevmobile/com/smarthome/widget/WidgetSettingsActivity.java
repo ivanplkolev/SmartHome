@@ -26,7 +26,7 @@ public class WidgetSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_widget_settings);
         ((App) getApplication()).getPresenterComponent().inject(this);
-
+        presenter.setContext(this);
 
         Spinner spinner1 = findViewById(R.id.spinner1);
         Spinner spinner2 = findViewById(R.id.spinner2);
@@ -39,13 +39,10 @@ public class WidgetSettingsActivity extends AppCompatActivity {
         spinner1.setAdapter(deviceArrayAdapter);
 
         TextView okButton = findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        okButton.setOnClickListener(view -> {
 
-                presenter.finishInitWidget(widgetId, widgetType, spinner2.getSelectedItem());
-                onBackPressed();
-            }
+            presenter.finishInitWidget(widgetId, widgetType, spinner2.getSelectedItem());
+            onBackPressed();
         });
         TextView cancelButton = findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(view -> onBackPressed());

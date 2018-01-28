@@ -11,7 +11,7 @@ public interface WidgetPresenter extends Presenter {
 
     void onClick(int widgetId, int widgetType);
 
-    void initWidget(int widgetId);
+    void initWidget(int widgetId, int wigetType);
 
     void finishInitWidget(long widgetId, int WidgetType, Object model);
 

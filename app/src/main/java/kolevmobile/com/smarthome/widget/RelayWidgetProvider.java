@@ -7,5 +7,7 @@ package kolevmobile.com.smarthome.widget;
 public class RelayWidgetProvider extends WidgetProvider {
 
     int widgetType = 2;
-
+    int getWidgetType(){
+        return  widgetType;
+    }
 }

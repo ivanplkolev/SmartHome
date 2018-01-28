@@ -19,13 +19,13 @@ public class CommunicatorImpl implements Communicator {
 
     private static OkHttpClient client = new OkHttpClient();
 
-    private Presenter presenter;
+//    private Presenter presenter;
 
-    public CommunicatorImpl(Presenter presenter) {
-        this.presenter = presenter;
-    }
+//    public CommunicatorImpl(Presenter presenter) {
+//        this.presenter = presenter;
+//    }
 
-    public void getDeviceStatus(Device device) {
+    public void getDeviceStatus(Presenter presenter, Device device) {
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
                 .host(device.getUrlAddress())
@@ -38,18 +38,18 @@ public class CommunicatorImpl implements Communicator {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                handleCommunicationFailure(device);
+                handleCommunicationFailure(presenter, device);
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-                handleDeviceResponce(response, device);
+                handleDeviceResponce(response,presenter, device);
             }
         });
     }
 
 
-    public void switchRelay(Device device, RelayModel relayModel) {
+    public void switchRelay(Presenter presenter, Device device, RelayModel relayModel) {
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
                 .host(device.getUrlAddress())
@@ -65,18 +65,18 @@ public class CommunicatorImpl implements Communicator {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                handleCommunicationFailure(device);
+                handleCommunicationFailure(presenter, device);
 
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-                handleDeviceResponce(response, device);
+                handleDeviceResponce(response,presenter, device);
             }
         });
     }
 
-    private void handleDeviceResponce(Response response, Device device) throws IOException {
+    private void handleDeviceResponce(Response response,Presenter presenter,  Device device) throws IOException {
         String responseString = null;
         try {
             if (!response.isSuccessful()) {
@@ -90,7 +90,7 @@ public class CommunicatorImpl implements Communicator {
         presenter.updateDevice(device, responseString);
     }
 
-    private void handleCommunicationFailure(Device device) {
+    private void handleCommunicationFailure(Presenter presenter, Device device) {
         presenter.updateDevice(device, Error.COMUNICATING_ERROR);
     }
 }

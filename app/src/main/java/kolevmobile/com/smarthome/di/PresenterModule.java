@@ -43,7 +43,6 @@ public class PresenterModule {
     }
 
     @Provides
-    @Singleton
     WidgetPresenter getWidgetPresenter() {
         return new WidgetPresenterImpl(daoSession);
     }

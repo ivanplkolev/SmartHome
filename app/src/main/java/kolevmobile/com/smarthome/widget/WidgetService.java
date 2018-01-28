@@ -29,6 +29,8 @@ public class WidgetService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         ((App) getApplication()).getPresenterComponent().inject(this);
 
+        presenter.setContext(this);
+
         int widgetId = intent.getIntExtra(WIDGET_ID, 0);
         int widgetType = intent.getIntExtra(WIDGET_TYPE, 0);
         String action = intent.getAction();

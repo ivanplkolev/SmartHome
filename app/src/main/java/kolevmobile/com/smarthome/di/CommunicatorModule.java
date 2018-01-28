@@ -23,17 +23,17 @@ public class CommunicatorModule {
     }
 
     public CommunicatorModule(Presenter mainPresenter){
-        this.mainPresenter = (MainPresenter) mainPresenter;
+        this.mainPresenter =  mainPresenter;
     }
 
     public CommunicatorModule(WidgetPresenter mainPresenter){
-        this.mainPresenter = (MainPresenter) mainPresenter;
+        this.mainPresenter = mainPresenter;
     }
 
     @Provides
     @Singleton
     Communicator getCommunicator() {
-        return new CommunicatorImpl(mainPresenter);
+        return new CommunicatorImpl();
     }
 
 
