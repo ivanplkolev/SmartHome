@@ -26,6 +26,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:minWidth="72sp"
+            android:text=" device name"
             android:textColor="#fff"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -37,6 +38,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:minWidth="72sp"
+            android:text="relay name"
             android:textColor="#fff"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -63,7 +65,8 @@
                     android:layout_height="48sp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/ic_off_bulb_24"
-                    android:padding="15sp" />
+                    android:padding="15sp"
+                    android:contentDescription="TODO" />
             </RelativeLayout>
 
 

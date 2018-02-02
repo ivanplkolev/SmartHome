@@ -13,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ToggleButton;
 
 import java.util.List;
@@ -26,6 +27,7 @@ import kolevmobile.com.smarthome.R;
 import kolevmobile.com.smarthome.about.AboutActivity;
 import kolevmobile.com.smarthome.add_edit_device.AddEditDeviceActivity;
 import kolevmobile.com.smarthome.details.DetailsActivity;
+import kolevmobile.com.smarthome.job_scheduler.MyJobService;
 import kolevmobile.com.smarthome.model.Device;
 
 
@@ -117,6 +119,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void onResume() {
         super.onResume();
         presenter.onResume();
+        Log.i("Ivan Main Activity !: ", "Service created");
+
+        Intent startServiceIntent = new Intent(this, MyJobService.class);
+        startService(startServiceIntent);
+        MyJobService.scheduleJob(this);
     }
 
     // Navigation methods

@@ -26,6 +26,8 @@ import kolevmobile.com.smarthome.model.SensorModel;
 import kolevmobile.com.smarthome.model.SensorWidget;
 import kolevmobile.com.smarthome.model.SensorWidgetDao;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 
 public class WidgetPresenterImpl implements WidgetPresenter {
 
@@ -84,6 +86,7 @@ public class WidgetPresenterImpl implements WidgetPresenter {
         Intent serviceIntent = new Intent(context, WidgetSettingsActivity.class);
         serviceIntent.putExtra(WidgetService.WIDGET_ID, widgetId);
         serviceIntent.putExtra(WidgetService.WIDGET_TYPE, widgetType);
+        serviceIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(serviceIntent);
     }
 

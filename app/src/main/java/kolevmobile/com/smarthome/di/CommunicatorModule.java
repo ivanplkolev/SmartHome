@@ -9,6 +9,7 @@ import kolevmobile.com.smarthome.connection.Communicator;
 import kolevmobile.com.smarthome.connection.CommunicatorImpl;
 import kolevmobile.com.smarthome.connection.DeviceResponceParser;
 import kolevmobile.com.smarthome.connection.DeviceResponceParserImpl;
+import kolevmobile.com.smarthome.job_scheduler.JobPresenterImpl;
 import kolevmobile.com.smarthome.main.MainPresenter;
 import kolevmobile.com.smarthome.widget.WidgetPresenter;
 
@@ -29,6 +30,11 @@ public class CommunicatorModule {
     public CommunicatorModule(WidgetPresenter mainPresenter){
         this.mainPresenter = mainPresenter;
     }
+
+    public CommunicatorModule(JobPresenterImpl mainPresenter){
+        this.mainPresenter = mainPresenter;
+    }
+
 
     @Provides
     @Singleton

@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import kolevmobile.com.smarthome.Presenter;
 import kolevmobile.com.smarthome.connection.*;
+import kolevmobile.com.smarthome.job_scheduler.JobPresenterImpl;
 import kolevmobile.com.smarthome.main.MainPresenterImpl;
 import kolevmobile.com.smarthome.widget.WidgetPresenterImpl;
 
@@ -20,5 +21,7 @@ public interface CommunicatorComponent {
     void inject(Presenter mainPresenter);
 
     void inject(WidgetPresenterImpl widgetPresenter);
+
+    void inject(JobPresenterImpl jobPresenter);
 
 }

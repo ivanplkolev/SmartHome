@@ -8,6 +8,8 @@ import kolevmobile.com.smarthome.add_edit_device.AddEditPresenter;
 import kolevmobile.com.smarthome.add_edit_device.AddEditPresenterImpl;
 import kolevmobile.com.smarthome.details.DetailsPresenter;
 import kolevmobile.com.smarthome.details.DetailsPresenterImpl;
+import kolevmobile.com.smarthome.job_scheduler.JobPresenter;
+import kolevmobile.com.smarthome.job_scheduler.JobPresenterImpl;
 import kolevmobile.com.smarthome.main.MainPresenter;
 import kolevmobile.com.smarthome.main.MainPresenterImpl;
 import kolevmobile.com.smarthome.model.DaoSession;
@@ -45,5 +47,11 @@ public class PresenterModule {
     @Provides
     WidgetPresenter getWidgetPresenter() {
         return new WidgetPresenterImpl(daoSession);
+    }
+
+    @Provides
+    @Singleton
+    JobPresenter getJobPresenter() {
+        return new JobPresenterImpl(daoSession);
     }
 }

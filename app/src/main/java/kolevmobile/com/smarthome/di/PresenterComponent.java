@@ -10,6 +10,7 @@ import kolevmobile.com.smarthome.add_edit_device.DeviceRelaysFragment;
 import kolevmobile.com.smarthome.add_edit_device.DeviceSenosrsFragment;
 import kolevmobile.com.smarthome.details.DetailsActivity;
 import kolevmobile.com.smarthome.details.DetailsPresenter;
+import kolevmobile.com.smarthome.job_scheduler.MyJobService;
 import kolevmobile.com.smarthome.main.MainActivity;
 import kolevmobile.com.smarthome.main.MainPresenter;
 import kolevmobile.com.smarthome.widget.WidgetPresenter;
@@ -45,4 +46,7 @@ public interface PresenterComponent {
     void inject(WidgetSettingsActivity widgetSettingsActivity);
 
     void inject(WidgetService widgetService);
+
+    void inject(MyJobService myJobService);
+
 }
